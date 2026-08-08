@@ -271,6 +271,7 @@ export default function App() {
                   onSelectHandyman={handleSelectHandyman}
                   onOpenIncidentModal={() => setIsIncidentModalOpen(true)}
                   onOpenSolicitarCita={() => setIsSolicitarCitaOpen(true)}
+                  onUpdateCitaStatus={handleUpdateCitaStatus}
                 />
               )}
 

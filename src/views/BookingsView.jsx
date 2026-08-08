@@ -12,10 +12,13 @@ export default function BookingsView({
   onOpenChat, 
   onSelectHandyman, 
   onOpenIncidentModal, 
-  onOpenSolicitarCita 
+  onOpenSolicitarCita,
+  onUpdateCitaStatus
 }) {
   const [activeTab, setActiveTab] = useState('active'); // 'active', 'past'
   const [copiedCode, setCopiedCode] = useState(null);
+  const [cancelModalCita, setCancelModalCita] = useState(null);
+  const [cancelPenaltyInfo, setCancelPenaltyInfo] = useState(null);
 
   const formatCRC = (amount) => {
     return new Intl.NumberFormat('es-CR', {
@@ -31,6 +34,40 @@ export default function BookingsView({
     setCopiedCode(code);
     setTimeout(() => setCopiedCode(null), 2000);
   };
+
+  const calculateCancelPenalty = (cita) => {
+    if (!cita) return { isLate: false, penaltyCRC: 0 };
+    if (cita.isEmergency) {
+      return { isLate: true, penaltyCRC: 5000, reason: 'Servicio de atención inmediata de emergencia' };
+    }
+    const now = new Date();
+    let apptDate = new Date();
+    if (cita.scheduledDate === 'Mañana') {
+      apptDate.setDate(apptDate.getDate() + 1);
+    }
+    const diffHours = (apptDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    if (diffHours >= 0 && diffHours < 2) {
+      return { isLate: true, penaltyCRC: 5000, reason: 'Cancelación a menos de 2 horas de la cita' };
+    }
+    return { isLate: false, penaltyCRC: 0, reason: 'Cancelación anticipada (sin costo)' };
+  };
+
+  const handleOpenCancelModal = (cita) => {
+    const info = calculateCancelPenalty(cita);
+    setCancelPenaltyInfo(info);
+    setCancelModalCita(cita);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (cancelModalCita && onUpdateCitaStatus) {
+      await onUpdateCitaStatus(cancelModalCita.id, {
+        status: 'Cancelada',
+        cancellationPenalty: cancelPenaltyInfo?.penaltyCRC || 0
+      });
+    }
+    setCancelModalCita(null);
+  };
+
 
   // Combine real server citas and local bookings
   const mergedCitas = [...citas];
@@ -207,14 +244,24 @@ export default function BookingsView({
                     </button>
                   </div>
 
-                  {/* Incident Report Button for Active Booking */}
-                  <button
-                    onClick={onOpenIncidentModal}
-                    className="w-full bg-[#ffdad6] dark:bg-[#3f1919] hover:bg-[#ba1a1a] text-[#ba1a1a] dark:text-[#ffdad6] hover:text-white font-extrabold py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1.5 border border-[#ba1a1a]/30 transition-all text-[11px]"
-                  >
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    <span>Reportar Incidencia con este Servicio</span>
-                  </button>
+                  {/* Incident & Cancel Action Buttons Grid */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleOpenCancelModal(res)}
+                      className="w-full bg-[#f6f3f2] dark:bg-[#222926] hover:bg-[#ffdad6] text-[#ba1a1a] dark:text-[#ffb4ab] font-bold py-2 px-3 rounded-xl text-[11px] flex items-center justify-center space-x-1 border border-[#ba1a1a]/30 transition-all"
+                    >
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      <span>Cancelar Cita</span>
+                    </button>
+
+                    <button
+                      onClick={onOpenIncidentModal}
+                      className="w-full bg-[#ffdad6] dark:bg-[#3f1919] hover:bg-[#ba1a1a] text-[#ba1a1a] dark:text-[#ffdad6] hover:text-white font-bold py-2 px-3 rounded-xl text-[11px] flex items-center justify-center space-x-1 border border-[#ba1a1a]/30 transition-all"
+                    >
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      <span>Reportar Incidencia</span>
+                    </button>
+                  </div>
                 </div>
               );
             })
@@ -236,6 +283,63 @@ export default function BookingsView({
           )}
         </div>
       )}
+
+      {/* CANCELLATION CONFIRMATION MODAL WITH 2-HOUR PENALTY POLICY */}
+      {cancelModalCita && (
+        <div className="fixed inset-0 z-50 bg-[#1c1b1b]/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#1a201d] rounded-3xl p-5 max-w-sm w-full border border-[#e5e2e1] dark:border-[#2e3633] space-y-4 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between border-b border-[#e5e2e1] dark:border-[#2e3633] pb-2">
+              <h4 className="font-black text-sm text-[#1c1b1b] dark:text-white flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-[#ba1a1a]" />
+                Confirmación de Cancelación
+              </h4>
+              <button onClick={() => setCancelModalCita(null)} className="text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+
+            {/* Late vs Free Cancellation Warning Box */}
+            {cancelPenaltyInfo?.isLate ? (
+              <div className="bg-[#fff5f5] dark:bg-[#321616] border border-[#ff8a8a] rounded-2xl p-3.5 space-y-1.5 text-xs text-[#b91c1c] dark:text-[#ffb4ab]">
+                <div className="flex items-center space-x-1.5 font-black">
+                  <span>⚠️ Política de Cancelación Tardía (Menos de 2 Horas)</span>
+                </div>
+                <p className="text-[11px] leading-tight opacity-90">
+                  Estás cancelando tu cita a menos de 2 horas de la hora pactada (o servicio de emergencia). Se aplicará una tarifa de penalización de <strong>₡5,000 CRC</strong> por desplazamiento del especialista en condominio.
+                </p>
+              </div>
+            ) : (
+              <div className="bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] rounded-2xl p-3.5 space-y-1 text-xs text-[#033028] dark:text-[#a5cfc4]">
+                <div className="flex items-center space-x-1.5 font-black">
+                  <span>✅ Cancelación Anticipada Gratuita</span>
+                </div>
+                <p className="text-[11px] leading-tight opacity-90">
+                  Tu cita será cancelada sin ningún costo ya que estás cancelando con más de 2 horas de anticipación.
+                </p>
+              </div>
+            )}
+
+            <div className="text-xs space-y-1 text-[#414846] dark:text-[#a9acaa] bg-[#f6f3f2] dark:bg-[#222926] p-3 rounded-xl border border-[#e5e2e1] dark:border-[#2e3633]">
+              <p>Cita: <strong>{cancelModalCita.serviceTitle}</strong></p>
+              <p>Fecha/Hora: <strong>{cancelModalCita.scheduledDate} {cancelModalCita.scheduledTime}</strong></p>
+            </div>
+
+            <div className="flex space-x-2 pt-1">
+              <button
+                onClick={() => setCancelModalCita(null)}
+                className="flex-1 bg-gray-100 dark:bg-[#222926] text-gray-700 dark:text-white font-bold text-xs py-2.5 rounded-xl"
+              >
+                Volver
+              </button>
+              <button
+                onClick={handleConfirmCancel}
+                className="flex-1 bg-[#ba1a1a] hover:bg-red-700 text-white font-black text-xs py-2.5 rounded-xl shadow-md transition-all"
+              >
+                {cancelPenaltyInfo?.isLate ? 'Confirmar (+₡5,000)' : 'Confirmar Cancelación'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* COMPLETED PAST RESERVATIONS LIST */}
       {activeTab === 'past' && (

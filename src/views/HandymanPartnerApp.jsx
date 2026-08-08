@@ -65,10 +65,19 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
 ;
 
 
-  // Citas pending assignment or offered to this handyman
-  const pendingCitas = citas.filter(c => c.status === 'Pendiente' || c.assignedHandymanId === partnerHandyman.id);
+  // Citas pending assignment (only unassigned 'Pendiente' citas, not the active job)
+  const pendingCitas = citas.filter(c => 
+    c.status === 'Pendiente' && 
+    (!activeJobCita || c.id !== activeJobCita.id)
+  );
 
   const handleAcceptRequest = async (reqCita) => {
+    const updated = {
+      ...reqCita,
+      status: 'Asignada - En camino',
+      assignedHandymanId: partnerHandyman.id,
+      assignedHandymanName: partnerHandyman.name
+    };
     if (onUpdateCitaStatus) {
       await onUpdateCitaStatus(reqCita.id, {
         status: 'Asignada - En camino',
@@ -76,10 +85,11 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
         assignedHandymanName: partnerHandyman.name
       });
     }
-    setActiveJobCita(reqCita);
+    setActiveJobCita(updated);
     setJobStatus('accepted');
     setActiveTab('active_job');
   };
+
 
   const handleCompleteJob = async () => {
     if (activeJobCita && onUpdateCitaStatus) {
