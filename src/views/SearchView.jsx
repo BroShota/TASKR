@@ -1,17 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Search, Filter, MapPin, ArrowUpDown, Award, Wrench, Droplet, Zap, 
-  Hammer, Paintbrush, Trees, Sparkles, Sliders, X, Check, ShieldCheck 
+  Hammer, Paintbrush, Trees, Sparkles, Sliders, X, Check, ShieldCheck,
+  Lightbulb
 } from 'lucide-react';
 import HandymanCard from '../components/HandymanCard';
 import { CATEGORIES, HANDYMEN, CONDO_ZONES } from '../data/mockData';
+import { semanticSearch, normalize } from '../data/searchDictionary';
 
 export default function SearchView({ onSelectHandyman, onQuickBook }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedZone, setSelectedZone] = useState('Todos los Condominios');
   const [sortBy, setSortBy] = useState('rating'); // 'rating', 'price_asc', 'price_desc', 'experience'
-  const [showFiltersModal, setShowFiltersModal] = useState(false);
 
   // Category Icon Resolver
   const getCategoryIcon = (iconName) => {
@@ -27,32 +28,72 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
     }
   };
 
-  // Filter & Sort Logic using useMemo
-  const filteredHandymen = useMemo(() => {
-    return HANDYMEN.filter((item) => {
-      // Direct search term matching name, specialty, or bio
-      const matchesSearch = 
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.specialty.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.zone.toLowerCase().includes(searchTerm.toLowerCase());
+  // ── Semantic Search Engine ──────────────────────────────────────
+  // Run semantic interpretation on the search term
+  const semantic = useMemo(() => {
+    if (!searchTerm || searchTerm.trim().length < 2) return null;
+    return semanticSearch(searchTerm);
+  }, [searchTerm]);
 
-      // Category matching
-      const matchesCategory = 
-        selectedCategory === 'all' || item.category === selectedCategory;
+  // Determine effective categories to filter by:
+  // 1. If user manually selected a category pill → that wins
+  // 2. Otherwise if semantic engine found matches → use those
+  // 3. Otherwise → all categories
+  const effectiveCategories = useMemo(() => {
+    if (selectedCategory !== 'all') return [selectedCategory];
+    if (semantic && semantic.categories.length > 0 && semantic.confidence >= 0.2) {
+      return semantic.categories;
+    }
+    return [];
+  }, [selectedCategory, semantic]);
+
+  // ── Filter & Sort Logic ──────────────────────────────────────────
+  const filteredHandymen = useMemo(() => {
+    const normalizedTerm = normalize(searchTerm);
+
+    return HANDYMEN.filter((item) => {
+      // Category matching (semantic or manual)
+      const matchesCategory =
+        effectiveCategories.length === 0 ||
+        effectiveCategories.includes(item.category);
 
       // Zone matching
-      const matchesZone = 
-        selectedZone === 'Todos los Condominios' || item.zone.toLowerCase().includes(selectedZone.toLowerCase());
+      const matchesZone =
+        selectedZone === 'Todos los Condominios' ||
+        item.zone.toLowerCase().includes(selectedZone.toLowerCase());
 
-      return matchesSearch && matchesCategory && matchesZone;
+      // Full-text fallback if no strong semantic match and user typed something
+      if (searchTerm && semantic && semantic.confidence < 0.2) {
+        const matchesText =
+          normalize(item.name).includes(normalizedTerm) ||
+          normalize(item.specialty).includes(normalizedTerm) ||
+          normalize(item.bio).includes(normalizedTerm) ||
+          normalize(item.zone).includes(normalizedTerm);
+        return matchesText && matchesZone;
+      }
+
+      return matchesCategory && matchesZone;
     }).sort((a, b) => {
       if (sortBy === 'price_asc') return a.hourlyRateCRC - b.hourlyRateCRC;
       if (sortBy === 'price_desc') return b.hourlyRateCRC - a.hourlyRateCRC;
       if (sortBy === 'experience') return b.experienceYears - a.experienceYears;
       return b.rating - a.rating; // default: highest rating
     });
-  }, [searchTerm, selectedCategory, selectedZone, sortBy]);
+  }, [searchTerm, effectiveCategories, selectedZone, sortBy, semantic]);
+
+  // When the user clicks a category chip in the semantic banner → apply it
+  const handleSemanticCategoryClick = (catId) => {
+    setSelectedCategory(catId);
+    setSearchTerm('');
+  };
+
+  // Clear everything
+  const clearAll = () => {
+    setSelectedCategory('all');
+    setSelectedZone('Todos los Condominios');
+    setSearchTerm('');
+    setSortBy('rating');
+  };
 
   return (
     <div className="space-y-4 pb-20">
@@ -63,17 +104,17 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
           ¿Qué reparación necesitas hoy?
         </h1>
         <p className="text-xs text-[#414846] dark:text-[#a9acaa] mb-3 font-medium">
-          Técnicos independientes verificados con pase directo a tu condominio.
+          Describe el problema con tus propias palabras — nosotros encontramos al especialista.
         </p>
 
-        {/* Direct Search Bar - Large pill shaped with light background as per DESIGN.md */}
+        {/* Smart Search Bar */}
         <div className="relative">
           <Search className="w-5 h-5 absolute left-3.5 top-3 text-[#717976] dark:text-[#a9acaa]" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Ej: Fuga de agua, instalar lámpara, pintar pared..."
+            placeholder='Ej: "el microondas malo", "se fue la luz", "tubo roto"...'
             className="w-full bg-white dark:bg-[#1a201d] text-[#1c1b1b] dark:text-white rounded-full pl-11 pr-10 py-2.5 text-xs font-semibold placeholder:text-[#717976] dark:placeholder:text-[#a9acaa] card-shadow border border-[#c0c8c5] dark:border-[#414846] focus:outline-none focus:ring-2 focus:ring-[#033028] dark:focus:ring-[#e5a93c]"
           />
           {searchTerm && (
@@ -85,9 +126,46 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
             </button>
           )}
         </div>
+
+        {/* ── Semantic Interpretation Banner ── */}
+        {semantic && semantic.interpreted && semantic.confidence >= 0.2 && selectedCategory === 'all' && (
+          <div className="mt-3 bg-[#f0f7f5] dark:bg-[#162b25] border border-[#b5dfd0] dark:border-[#2e3633] rounded-2xl px-3 py-2.5 flex items-start gap-2 animate-fadeIn">
+            <Lightbulb className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#e5a93c]" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-bold text-[#033028] dark:text-[#a5cfc4] mb-1.5">
+                {semantic.interpreted}
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {semantic.categories.map(catId => {
+                  const cat = CATEGORIES.find(c => c.id === catId);
+                  if (!cat) return null;
+                  return (
+                    <button
+                      key={catId}
+                      onClick={() => handleSemanticCategoryClick(catId)}
+                      className="text-[10px] font-extrabold bg-[#033028] dark:bg-[#1e463e] text-white px-2.5 py-1 rounded-full hover:bg-[#1e463e] dark:hover:bg-[#264e45] transition-colors"
+                    >
+                      Ver solo {cat.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Low confidence fallback notice */}
+        {searchTerm.length > 3 && semantic && semantic.confidence < 0.2 && (
+          <div className="mt-3 bg-[#fff8ed] dark:bg-[#2a1f10] border border-[#f5c77a] dark:border-[#5c3d1a] rounded-2xl px-3 py-2 flex items-center gap-2">
+            <Search className="w-3.5 h-3.5 shrink-0 text-[#e5a93c]" />
+            <p className="text-[11px] font-semibold text-[#7a4f00] dark:text-[#f0c97a]">
+              Buscando "<strong>{searchTerm}</strong>" en nombre y especialidad...
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Main Categories Horizontal Scroll / Grid */}
+      {/* Main Categories Horizontal Scroll */}
       <div className="px-4">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xs font-black uppercase tracking-wider text-[#414846] dark:text-[#a9acaa]">
@@ -101,6 +179,13 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
         <div className="flex items-center space-x-2.5 overflow-x-auto no-scrollbar py-2.5 px-0.5 min-h-[56px]">
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat.id;
+            // Highlight a category if semantic engine matched it
+            const isSemanticMatch =
+              selectedCategory === 'all' &&
+              semantic &&
+              semantic.confidence >= 0.2 &&
+              semantic.categories.includes(cat.id);
+
             return (
               <button
                 key={cat.id}
@@ -108,15 +193,24 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
                 className={`flex items-center space-x-2 px-3.5 py-2 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all shrink-0 ${
                   isSelected
                     ? 'bg-white dark:bg-[#1a201d] text-[#033028] dark:text-white border-2 border-[#033028] dark:border-[#e5a93c] shadow-md'
+                    : isSemanticMatch
+                    ? 'bg-[#f0f7f5] dark:bg-[#162b25] text-[#033028] dark:text-[#a5cfc4] border-2 border-dashed border-[#6bbea5] dark:border-[#3d7a68] shadow-sm'
                     : 'bg-white dark:bg-[#1a201d] text-[#414846] dark:text-[#f3f0ef] border border-[#e5e2e1] dark:border-[#2e3633] hover:bg-[#f6f3f2] dark:hover:bg-[#222926]'
                 }`}
               >
                 <span className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                  isSelected ? 'bg-[#f0f7f5] dark:bg-[#162b25] text-[#033028] dark:text-[#e5a93c]' : 'bg-[#f6f3f2] dark:bg-[#222926] text-[#717976] dark:text-[#a9acaa]'
+                  isSelected
+                    ? 'bg-[#f0f7f5] dark:bg-[#162b25] text-[#033028] dark:text-[#e5a93c]'
+                    : isSemanticMatch
+                    ? 'bg-[#dff0ea] dark:bg-[#1e3d35] text-[#033028] dark:text-[#a5cfc4]'
+                    : 'bg-[#f6f3f2] dark:bg-[#222926] text-[#717976] dark:text-[#a9acaa]'
                 }`}>
                   {getCategoryIcon(cat.icon)}
                 </span>
                 <span className="truncate">{cat.name}</span>
+                {isSemanticMatch && (
+                  <span className="w-1.5 h-1.5 bg-[#e5a93c] rounded-full shrink-0" />
+                )}
               </button>
             );
           })}
@@ -150,22 +244,23 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
           </select>
         </div>
 
-        {/* Active Filter Indicator & Clear Button (Clean row below selects) */}
+        {/* Active Filter Indicator & Clear Button */}
         {(selectedCategory !== 'all' || selectedZone !== 'Todos los Condominios' || searchTerm) && (
           <div className="flex items-center justify-between bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] px-3 py-1.5 rounded-xl text-[11px]">
             <div className="flex items-center space-x-1.5 text-[#033028] dark:text-[#a5cfc4] font-medium truncate">
               <Filter className="w-3.5 h-3.5 shrink-0 text-[#e5a93c]" />
               <span className="truncate">
-                Filtro: <strong>{selectedCategory !== 'all' ? CATEGORIES.find(c => c.id === selectedCategory)?.name : (searchTerm ? `"${searchTerm}"` : selectedZone)}</strong>
+                Filtro: <strong>
+                  {selectedCategory !== 'all'
+                    ? CATEGORIES.find(c => c.id === selectedCategory)?.name
+                    : searchTerm
+                    ? `"${searchTerm}"`
+                    : selectedZone}
+                </strong>
               </span>
             </div>
             <button
-              onClick={() => {
-                setSelectedCategory('all');
-                setSelectedZone('Todos los Condominios');
-                setSearchTerm('');
-                setSortBy('rating');
-              }}
+              onClick={clearAll}
               className="text-[#ba1a1a] dark:text-[#ffb4ab] hover:underline font-extrabold text-[11px] shrink-0 ml-2 flex items-center gap-1"
             >
               <X className="w-3.5 h-3.5" />
@@ -208,11 +303,7 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
               Intenta cambiar la categoría o los filtros de búsqueda para ver más especialistas en tu zona.
             </p>
             <button
-              onClick={() => {
-                setSelectedCategory('all');
-                setSelectedZone('Todos los Condominios');
-                setSearchTerm('');
-              }}
+              onClick={clearAll}
               className="bg-[#033028] dark:bg-[#1e463e] hover:bg-[#1e463e] dark:hover:bg-[#264e45] text-white font-bold text-xs px-4 py-2 rounded-xl"
             >
               Ver Todos los Profesionales
