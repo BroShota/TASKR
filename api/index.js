@@ -21,6 +21,13 @@ module.exports = async (req, res) => {
 
   const url = req.url || '/';
 
+  // Parse body safely if string
+  let body = req.body || {};
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch (e) { body = {}; }
+  }
+
+
   // GET /api/health
   if (req.method === 'GET' && (url.endsWith('/health') || url.includes('/health'))) {
     res.status(200).json({ status: 'OK', server: 'TASKR Vercel Serverless API', timestamp: new Date() });
@@ -29,7 +36,7 @@ module.exports = async (req, res) => {
 
   // POST /api/auth/register
   if (req.method === 'POST' && url.includes('/auth/register')) {
-    const payload = req.body;
+    const payload = body;
     if (!payload || !payload.email || !payload.password || !payload.name) {
       res.status(400).json({ error: 'Nombre, correo y contraseña son obligatorios' });
       return;
@@ -46,7 +53,7 @@ module.exports = async (req, res) => {
 
   // POST /api/auth/login
   if (req.method === 'POST' && url.includes('/auth/login')) {
-    const { email, password } = req.body || {};
+    const { email, password } = body || {};
     const user = getUserByEmail(email);
     if (!user || user.password !== password) {
       res.status(401).json({ error: 'Credenciales inválidas' });
@@ -73,7 +80,7 @@ module.exports = async (req, res) => {
 
   // POST /api/citas
   if (req.method === 'POST' && url.includes('/citas')) {
-    const payload = req.body;
+    const payload = body;
     const newCita = createCita(payload);
     res.status(201).json({ success: true, cita: newCita });
     return;
@@ -83,7 +90,7 @@ module.exports = async (req, res) => {
   if (req.method === 'PATCH' && url.includes('/citas')) {
     const parts = url.split('/');
     const citaId = parts[parts.length - 1];
-    const updates = req.body;
+    const updates = body;
     const updated = updateCita(citaId, updates);
     if (!updated) {
       res.status(404).json({ error: 'Cita no encontrada' });
@@ -95,11 +102,12 @@ module.exports = async (req, res) => {
 
   // POST /api/upload
   if (req.method === 'POST' && url.includes('/upload')) {
-    const { base64Data } = req.body || {};
+    const { base64Data } = body || {};
     // Return base64 directly as data URL in Serverless environments
     res.status(200).json({ success: true, photoUrl: base64Data });
     return;
   }
+
 
   res.status(404).json({ error: 'Ruta no encontrada en Vercel Serverless API' });
 };
