@@ -134,6 +134,11 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
             <div className="flex-1 min-w-0">
               <p className="text-[11px] font-bold text-[#033028] dark:text-[#a5cfc4] mb-1.5">
                 {semantic.interpreted}
+                {semantic.fuzzyToken && (
+                  <span className="ml-1.5 font-normal text-[#717976] dark:text-[#a9acaa]">
+                    (reconocimos "<em>{semantic.fuzzyToken.original}</em>" → {semantic.fuzzyToken.suggested})
+                  </span>
+                )}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {semantic.categories.map(catId => {
@@ -153,6 +158,7 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
             </div>
           </div>
         )}
+
 
         {/* Low confidence fallback notice */}
         {searchTerm.length > 3 && semantic && semantic.confidence < 0.2 && (
