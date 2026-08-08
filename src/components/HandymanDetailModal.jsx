@@ -12,8 +12,10 @@ export default function HandymanDetailModal({
   onOpenChat,
   initialMode = 'profile' // 'profile' or 'book'
 }) {
+  const todayStr = new Date().toISOString().split('T')[0];
   const [modalMode, setModalMode] = useState(initialMode); // 'profile' or 'book'
-  const [selectedDateDay, setSelectedDateDay] = useState('Hoy'); // 'Hoy', 'Mañana'
+  const [selectedDateDay, setSelectedDateDay] = useState('Hoy'); // 'Hoy', 'Mañana', 'Fecha'
+  const [customDate, setCustomDate] = useState(todayStr);
   const [customTime, setCustomTime] = useState('09:00');
   const [isEmergency, setIsEmergency] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('sinpe'); // 'sinpe', 'card', 'cash'
@@ -32,6 +34,12 @@ export default function HandymanDetailModal({
     return `${hourStr}:${mStr || '00'} ${period}`;
   };
 
+  const getDateDisplayText = () => {
+    if (selectedDateDay === 'Hoy') return 'Hoy';
+    if (selectedDateDay === 'Mañana') return 'Mañana';
+    return `El ${customDate}`;
+  };
+
   // Base visit and diagnostic fee
   const baseTotal = handyman.hourlyRateCRC || 15000;
   const emergencyFee = isEmergency ? 5000 : 0;
@@ -48,7 +56,7 @@ export default function HandymanDetailModal({
   const handleBooking = () => {
     const formattedSlot = isEmergency 
       ? 'Atención Inmediata de Emergencia' 
-      : `${selectedDateDay} a las ${formatTime12h(customTime)}`;
+      : `${getDateDisplayText()} a las ${formatTime12h(customTime)}`;
 
     onConfirmBooking({
       handyman,
@@ -59,6 +67,7 @@ export default function HandymanDetailModal({
       notes
     });
   };
+
 
 
 
@@ -301,27 +310,43 @@ export default function HandymanDetailModal({
                         Día y Hora deseada para la cita:
                       </label>
                       <span className="text-[10px] text-[#033028] dark:text-[#e5a93c] font-black bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] px-2 py-0.5 rounded-md">
-                        🕒 {selectedDateDay} a las {formatTime12h(customTime)}
+                        🕒 {getDateDisplayText()} a las {formatTime12h(customTime)}
                       </span>
                     </div>
 
+                    {/* Day Selector Pills: Hoy, Mañana, Elegir Fecha */}
+                    <div className="flex bg-white dark:bg-[#1a201d] border border-[#c0c8c5] dark:border-[#414846] p-1 rounded-xl">
+                      {['Hoy', 'Mañana', 'Elegir Fecha'].map((d) => (
+                        <button
+                          key={d}
+                          onClick={() => setSelectedDateDay(d)}
+                          className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all ${
+                            selectedDateDay === d
+                              ? 'bg-[#033028] text-white dark:bg-[#e5a93c] dark:text-[#1c1b1b] shadow-xs'
+                              : 'text-[#414846] dark:text-[#a9acaa] hover:text-[#1c1b1b]'
+                          }`}
+                        >
+                          {d === 'Elegir Fecha' ? '📅 Fecha' : d}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Date and Time Controls Grid */}
                     <div className="grid grid-cols-2 gap-2">
-                      {/* Day Selector Pills */}
-                      <div className="flex bg-white dark:bg-[#1a201d] border border-[#c0c8c5] dark:border-[#414846] p-1 rounded-xl">
-                        {['Hoy', 'Mañana'].map((d) => (
-                          <button
-                            key={d}
-                            onClick={() => setSelectedDateDay(d)}
-                            className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all ${
-                              selectedDateDay === d
-                                ? 'bg-[#033028] text-white dark:bg-[#e5a93c] dark:text-[#1c1b1b] shadow-xs'
-                                : 'text-[#414846] dark:text-[#a9acaa] hover:text-[#1c1b1b]'
-                            }`}
-                          >
-                            {d}
-                          </button>
-                        ))}
-                      </div>
+                      {/* Custom Date Input (Visible when 'Elegir Fecha' is active, otherwise shows day indicator) */}
+                      {selectedDateDay === 'Elegir Fecha' ? (
+                        <input
+                          type="date"
+                          value={customDate}
+                          min={todayStr}
+                          onChange={(e) => setCustomDate(e.target.value)}
+                          className="w-full bg-white dark:bg-[#1a201d] border-2 border-[#033028] dark:border-[#e5a93c] rounded-xl px-2.5 py-1.5 text-xs font-black text-[#033028] dark:text-[#a5cfc4] focus:outline-none shadow-xs text-center cursor-pointer"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center bg-[#f6f3f2] dark:bg-[#222926] border border-[#c0c8c5] dark:border-[#414846] rounded-xl px-3 py-1.5 text-xs font-bold text-[#414846] dark:text-[#a9acaa]">
+                          <span>Día: <strong>{selectedDateDay}</strong></span>
+                        </div>
+                      )}
 
                       {/* Custom Time Input Box */}
                       <div className="relative flex items-center">
@@ -335,6 +360,7 @@ export default function HandymanDetailModal({
                     </div>
                   </div>
                 )}
+
 
 
                 {/* Notes Input */}
