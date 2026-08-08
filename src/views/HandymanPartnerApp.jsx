@@ -129,7 +129,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#414846] dark:text-[#a9acaa]">
               Configuración de Cobro Directo (Autónomo)
             </span>
-            <span className="text-[10px] text-[#033028] dark:text-[#a5cfc4] font-bold">Sin comisiones TASKR</span>
+            <span className="text-[10px] text-[#033028] dark:text-[#a5cfc4] font-bold">Cobro Directo</span>
           </div>
 
           <div className="flex items-center space-x-4 pt-1">

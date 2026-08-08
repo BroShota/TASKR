@@ -451,7 +451,7 @@ export default function HandymanDetailModal({
                     <div>
                       <p className="font-bold">Pago Acordado Directamente por SINPE Móvil</p>
                       <p className="text-[11px] text-[#414846] dark:text-[#a9acaa] mt-0.5">
-                        El técnico decide si te facilita su número SINPE durante la atención o chat. TASKR no interfiere ni cobra comisiones en las transacciones directas entre cliente y profesional.
+                        El técnico decide si te facilita su número SINPE durante la atención o chat para la transferencia directa.
                       </p>
                     </div>
                   </div>
