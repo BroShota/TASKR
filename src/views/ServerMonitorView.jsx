@@ -3,9 +3,11 @@ import { Server, Smartphone, Wrench, ShieldCheck, Activity, Users, CheckCircle2,
 import { HANDYMEN } from '../data/mockData';
 
 export default function ServerMonitorView({ citas = [], isDarkMode, onToggleTheme, onUpdateCitaStatus }) {
-  const localIp = window.location.hostname;
-  const clientUrl = `http://${localIp}:5173/?role=client`;
-  const handymanUrl = `http://${localIp}:5173/?role=handyman`;
+  const baseUrl = window.location.origin;
+  const clientUrl = `${baseUrl}/?role=client`;
+  const handymanUrl = `${baseUrl}/?role=handyman`;
+  const supervisorUrl = `${baseUrl}/?role=supervisor`;
+
 
   const [statusFilter, setStatusFilter] = useState('ALL');
 
