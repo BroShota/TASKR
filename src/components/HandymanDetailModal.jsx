@@ -21,6 +21,72 @@ export default function HandymanDetailModal({
   const [selectedPayment, setSelectedPayment] = useState('sinpe'); // 'sinpe', 'card', 'cash'
   const [notes, setNotes] = useState('');
 
+  // Fictional Credit/Debit Cards State
+  const [cardsList, setCardsList] = useState([
+    {
+      id: 'card_1',
+      bank: 'Banco Nacional CR',
+      type: 'Visa Débito Gold',
+      numberMasked: '**** **** **** 4892',
+      expiry: '08/28',
+      holder: client?.name || 'Cliente Residente',
+      color: 'from-[#033028] to-[#162b25]',
+      badge: 'Visa'
+    },
+    {
+      id: 'card_2',
+      bank: 'BAC Credomatic',
+      type: 'Mastercard Black',
+      numberMasked: '**** **** **** 9104',
+      expiry: '11/27',
+      holder: client?.name || 'Cliente Residente',
+      color: 'from-[#1c1b1b] to-[#2e3633]',
+      badge: 'Mastercard'
+    },
+    {
+      id: 'card_3',
+      bank: 'Scotiabank CR',
+      type: 'American Express Platinum',
+      numberMasked: '**** ****** *3002',
+      expiry: '05/29',
+      holder: client?.name || 'Cliente Residente',
+      color: 'from-[#384541] to-[#1a201d]',
+      badge: 'AMEX'
+    }
+  ]);
+  const [selectedCardId, setSelectedCardId] = useState('card_1');
+  const [showAddCardForm, setShowAddCardForm] = useState(false);
+  const [newCardNumber, setNewCardNumber] = useState('');
+  const [newCardExpiry, setNewCardExpiry] = useState('');
+  const [newCardCvc, setNewCardCvc] = useState('');
+  const [newCardName, setNewCardName] = useState('');
+
+  const handleAddNewCard = (e) => {
+    e.preventDefault();
+    if (!newCardNumber || !newCardExpiry) return;
+    const cleanNum = newCardNumber.replace(/\s+/g, '');
+    const last4 = cleanNum.slice(-4) || '4242';
+    const brand = cleanNum.startsWith('5') ? 'Mastercard' : cleanNum.startsWith('3') ? 'AMEX' : 'Visa';
+    const newCard = {
+      id: `card_${Date.now()}`,
+      bank: 'Banco San José',
+      type: `${brand} Ficticia`,
+      numberMasked: `**** **** **** ${last4}`,
+      expiry: newCardExpiry || '12/29',
+      holder: newCardName || client?.name || 'Cliente Residente',
+      color: brand === 'Mastercard' ? 'from-[#1c1b1b] to-[#2e3633]' : 'from-[#033028] to-[#162b25]',
+      badge: brand
+    };
+    setCardsList([...cardsList, newCard]);
+    setSelectedCardId(newCard.id);
+    setShowAddCardForm(false);
+    setNewCardNumber('');
+    setNewCardExpiry('');
+    setNewCardCvc('');
+    setNewCardName('');
+  };
+
+
   if (!handyman) return null;
 
   // Format 24h string to 12h string with AM/PM
@@ -457,18 +523,99 @@ export default function HandymanDetailModal({
                   </div>
                 )}
 
-                {/* EFECTIVO Highlight Box */}
-                {selectedPayment === 'cash' && (
-                  <div className="mt-2.5 p-3 rounded-xl bg-[#f6f3f2] dark:bg-[#222926] border border-[#e5e2e1] dark:border-[#2e3633] text-[#1c1b1b] dark:text-[#f3f0ef] text-xs flex items-start space-x-2">
-                    <Banknote className="w-4 h-4 text-[#e5a93c] shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold">Pago Directo en Efectivo</p>
-                      <p className="text-[11px] text-[#414846] dark:text-[#a9acaa] mt-0.5">
-                        Pagas en persona directamente al técnico al finalizar la visita. TASKR no interfiere en los pagos en efectivo.
-                      </p>
+                {/* TARJETA Ficticia Selection Box */}
+                {selectedPayment === 'card' && (
+                  <div className="mt-2.5 bg-[#f6f3f2] dark:bg-[#222926] border border-[#e5e2e1] dark:border-[#2e3633] rounded-2xl p-3 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-black uppercase text-[#1c1b1b] dark:text-white flex items-center gap-1">
+                        <CreditCard className="w-3.5 h-3.5 text-[#e5a93c]" />
+                        Selecciona Tarjeta Ficticia
+                      </span>
+                      <button
+                        onClick={() => setShowAddCardForm(!showAddCardForm)}
+                        className="text-[10px] font-extrabold text-[#033028] dark:text-[#a5cfc4] hover:underline"
+                      >
+                        {showAddCardForm ? '← Volver' : '+ Nueva Tarjeta'}
+                      </button>
                     </div>
+
+                    {!showAddCardForm ? (
+                      <div className="space-y-1.5">
+                        {cardsList.map((card) => {
+                          const isSelected = selectedCardId === card.id;
+                          return (
+                            <div
+                              key={card.id}
+                              onClick={() => setSelectedCardId(card.id)}
+                              className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between bg-gradient-to-r ${card.color} text-white ${
+                                isSelected
+                                  ? 'ring-2 ring-[#e5a93c] shadow-md scale-[1.01]'
+                                  : 'opacity-85 hover:opacity-100'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2.5">
+                                <div className="w-7 h-5 rounded bg-white/20 flex items-center justify-center text-[9px] font-black tracking-tighter">
+                                  {card.badge}
+                                </div>
+                                <div>
+                                  <div className="flex items-center space-x-1.5">
+                                    <span className="text-xs font-black">{card.bank}</span>
+                                    <span className="text-[9px] opacity-75 font-mono">{card.numberMasked}</span>
+                                  </div>
+                                  <span className="text-[10px] opacity-80 block">{card.holder} • Vence {card.expiry}</span>
+                                </div>
+                              </div>
+
+                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-[#e5a93c] bg-[#e5a93c]' : 'border-white/50'}`}>
+                                {isSelected && <Check className="w-2.5 h-2.5 text-[#1c1b1b]" />}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <form onSubmit={handleAddNewCard} className="space-y-2 bg-white dark:bg-[#1a201d] p-3 rounded-xl border border-[#c0c8c5] dark:border-[#414846]">
+                        <p className="text-[11px] font-bold text-[#1c1b1b] dark:text-white mb-1">Agregar Tarjeta Ficticia de Prueba</p>
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Número de tarjeta (ej: 4532 8901 2345 6789)"
+                            value={newCardNumber}
+                            onChange={(e) => setNewCardNumber(e.target.value)}
+                            className="w-full text-xs p-2 rounded-lg border border-[#c0c8c5] dark:border-[#414846] bg-white dark:bg-[#222926] text-[#1c1b1b] dark:text-white"
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            type="text"
+                            placeholder="Expira (MM/YY)"
+                            value={newCardExpiry}
+                            onChange={(e) => setNewCardExpiry(e.target.value)}
+                            className="w-full text-xs p-2 rounded-lg border border-[#c0c8c5] dark:border-[#414846] bg-white dark:bg-[#222926] text-[#1c1b1b] dark:text-white"
+                            required
+                          />
+                          <input
+                            type="password"
+                            maxLength="4"
+                            placeholder="CVC (123)"
+                            value={newCardCvc}
+                            onChange={(e) => setNewCardCvc(e.target.value)}
+                            className="w-full text-xs p-2 rounded-lg border border-[#c0c8c5] dark:border-[#414846] bg-white dark:bg-[#222926] text-[#1c1b1b] dark:text-white"
+                            required
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          className="w-full bg-[#033028] dark:bg-[#e5a93c] text-white dark:text-[#1c1b1b] font-black text-xs py-2 rounded-lg shadow-xs"
+                        >
+                          Guardar Tarjeta Ficticia
+                        </button>
+                      </form>
+                    )}
                   </div>
                 )}
+
 
 
               </div>
