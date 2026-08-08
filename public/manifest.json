@@ -1,0 +1,17 @@
+{
+  "short_name": "TASKR",
+  "name": "TASKR - Plataforma de Servicios Residenciales & Citas",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#033028",
+  "theme_color": "#033028",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Asignación y solicitud de citas técnicas para condominios y residencias."
+}

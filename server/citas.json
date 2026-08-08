@@ -1,0 +1,71 @@
+{
+  "citas": [
+    {
+      "id": "CIT-8492",
+      "clientName": "Doña Sofía Arguedas",
+      "clientPhone": "+506 8844-1122",
+      "condo": "Condominio Montes del Sol",
+      "unit": "Casa 42B",
+      "serviceTitle": "Reparación de Fuga en Fregadero",
+      "category": "Plomería",
+      "description": "Fuga leve en la tubería bajo la pila de la cocina.",
+      "scheduledDate": "2026-08-04",
+      "scheduledTime": "14:30",
+      "status": "Asignada - En camino",
+      "assignedHandymanId": "h_001",
+      "assignedHandymanName": "Carlos Montero",
+      "passCode": "TASKR-8492",
+      "paymentMethod": "SINPE Móvil",
+      "totalCRC": 18000,
+      "createdAt": "2026-08-04T00:17:43.653Z"
+    },
+    {
+      "id": "CIT-9925",
+      "clientName": "Don Alejandro Fonseca",
+      "clientPhone": "+506 8711-3344",
+      "condo": "Condominio Cerro Alto",
+      "unit": "Torre A - Apto 302",
+      "serviceTitle": "Instalación de Grifo y Lavatorio",
+      "category": "Plomería",
+      "description": "Cambio de mezcladora de lavatorio principal.",
+      "scheduledDate": "2026-08-05",
+      "scheduledTime": "10:00",
+      "status": "Pendiente",
+      "assignedHandymanId": null,
+      "assignedHandymanName": null,
+      "passCode": "TASKR-9925",
+      "paymentMethod": "SINPE Móvil",
+      "totalCRC": 12000,
+      "createdAt": "2026-08-04T00:17:43.654Z"
+    }
+  ],
+  "tecnicos": [
+    {
+      "id": "hm-1",
+      "name": "Mario Jiménez",
+      "specialty": "Especialista en Plomería & Gas",
+      "phone": "+506 8844-9911",
+      "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80",
+      "rating": 4.9,
+      "status": "Disponible"
+    },
+    {
+      "id": "hm-2",
+      "name": "Carlos Mora",
+      "specialty": "Electricidad Residencial & Smart Home",
+      "phone": "+506 8712-4455",
+      "avatar": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80",
+      "rating": 4.8,
+      "status": "Disponible"
+    },
+    {
+      "id": "hm-3",
+      "name": "Lucía Fernández",
+      "specialty": "Cerrajería Digital & Seguridad",
+      "phone": "+506 8333-7788",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      "rating": 4.95,
+      "status": "Disponible"
+    }
+  ]
+}
