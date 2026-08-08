@@ -13,6 +13,8 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
   const [jobStatus, setJobStatus] = useState('accepted'); // 'accepted', 'arrived', 'completed'
   const [showPayoutSuccess, setShowPayoutSuccess] = useState(false);
   const [activeJobCita, setActiveJobCita] = useState(null);
+  const [showAdjustPriceModal, setShowAdjustPriceModal] = useState(false);
+  const [adjustedPrice, setAdjustedPrice] = useState('');
 
   // Technician Payment Acceptance Autonomy
   const [acceptsSinpe, setAcceptsSinpe] = useState(partnerHandyman.acceptsSinpe ?? true);
@@ -26,6 +28,25 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
       maximumFractionDigits: 0
     }).format(amount || 0);
   };
+
+  const handleSaveAdjustedPrice = async () => {
+    const priceNum = parseInt(adjustedPrice.replace(/\D/g, ''), 10);
+    if (!priceNum || isNaN(priceNum)) return;
+
+    if (activeJobCita && onUpdateCitaStatus) {
+      await onUpdateCitaStatus(activeJobCita.id, {
+        totalCRC: priceNum,
+        status: `En Proceso`
+      });
+      setActiveJobCita({
+        ...activeJobCita,
+        totalCRC: priceNum
+      });
+    }
+    setShowAdjustPriceModal(false);
+    setAdjustedPrice('');
+  };
+
 
   // Citas pending assignment or offered to this handyman
   const pendingCitas = citas.filter(c => c.status === 'Pendiente' || c.assignedHandymanId === partnerHandyman.id);
@@ -391,18 +412,80 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
                 1. MARCAR LLEGADA A CASETA DEL CONDOMINIO
               </button>
             ) : (
-              <button
-                onClick={handleCompleteJob}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-4 rounded-2xl text-xs shadow-md transition-all uppercase tracking-wider flex items-center justify-center space-x-2"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>2. FINALIZAR TRABAJO & COBRAR ({formatCRC(activeJobCita?.totalCRC || 18000)})</span>
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setAdjustedPrice(activeJobCita?.totalCRC?.toString() || '18000');
+                    setShowAdjustPriceModal(true);
+                  }}
+                  className="w-full bg-white dark:bg-[#1a201d] hover:bg-[#f0f7f5] text-[#033028] dark:text-[#e5a93c] font-black py-2.5 px-3 rounded-xl border border-[#033028] dark:border-[#e5a93c] text-xs flex items-center justify-center space-x-1.5 shadow-xs"
+                >
+                  <DollarSign className="w-4 h-4 text-[#e5a93c]" />
+                  <span>✏️ Cotizar / Ajustar Presupuesto Final en Sitio</span>
+                </button>
+
+                <button
+                  onClick={handleCompleteJob}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-4 rounded-2xl text-xs shadow-md transition-all uppercase tracking-wider flex items-center justify-center space-x-2"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>2. FINALIZAR TRABAJO & COBRAR ({formatCRC(activeJobCita?.totalCRC || 18000)})</span>
+                </button>
+              </div>
             )}
 
           </div>
         </div>
       )}
+
+      {/* Adjust Site Price Modal */}
+      {showAdjustPriceModal && (
+        <div className="fixed inset-0 z-50 bg-[#1c1b1b]/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#1a201d] rounded-3xl p-5 max-w-sm w-full border border-[#e5e2e1] dark:border-[#2e3633] space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#e5e2e1] dark:border-[#2e3633] pb-2">
+              <h4 className="font-black text-sm text-[#1c1b1b] dark:text-white flex items-center gap-1.5">
+                <DollarSign className="w-4 h-4 text-[#e5a93c]" />
+                Cotización / Presupuesto Final en Sitio
+              </h4>
+              <button onClick={() => setShowAdjustPriceModal(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+
+            <p className="text-xs text-[#414846] dark:text-[#a9acaa]">
+              Ingresa el monto total acordado con el residente tras evaluar el trabajo completo (ej. Pintura completa ₡300,000):
+            </p>
+
+            <div>
+              <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">Monto Total en Colones (CRC):</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3 text-sm font-black text-[#033028] dark:text-[#e5a93c]">₡</span>
+                <input
+                  type="number"
+                  placeholder="300000"
+                  value={adjustedPrice}
+                  onChange={(e) => setAdjustedPrice(e.target.value)}
+                  className="w-full bg-[#fdfcfb] dark:bg-[#222926] border-2 border-[#033028] dark:border-[#e5a93c] rounded-xl pl-8 pr-3 py-2 text-sm font-black text-[#033028] dark:text-white focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex space-x-2 pt-2">
+              <button
+                onClick={() => setShowAdjustPriceModal(false)}
+                className="flex-1 bg-gray-100 dark:bg-[#222926] text-gray-700 dark:text-white font-bold text-xs py-2.5 rounded-xl"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveAdjustedPrice}
+                className="flex-1 bg-[#033028] dark:bg-[#e5a93c] text-white dark:text-[#1c1b1b] font-black text-xs py-2.5 rounded-xl shadow-md"
+              >
+                Guardar Presupuesto
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* TAB 3: EARNINGS & WALLET */}
       {activeTab === 'earnings' && (
