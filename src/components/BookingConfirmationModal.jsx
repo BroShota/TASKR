@@ -104,8 +104,8 @@ export default function BookingConfirmationModal({ bookingData, client, onClose,
               <span className="font-semibold text-[#1c1b1b]">{handyman.specialty}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-[#e5e2e1]">
-              <span className="text-[#414846]">Duración contratada:</span>
-              <span className="font-semibold text-[#1c1b1b]">{hours} Hora(s)</span>
+              <span className="text-[#414846]">Hora / Modalidad:</span>
+              <span className="font-semibold text-[#1c1b1b]">{bookingData.timeSlot || (bookingData.isEmergency ? 'Atención Inmediata' : '08:00 AM')}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-[#e5e2e1]">
               <span className="text-[#414846]">Método de pago:</span>

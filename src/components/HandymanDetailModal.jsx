@@ -13,14 +13,15 @@ export default function HandymanDetailModal({
   initialMode = 'profile' // 'profile' or 'book'
 }) {
   const [modalMode, setModalMode] = useState(initialMode); // 'profile' or 'book'
-  const [selectedHours, setSelectedHours] = useState(1);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('08:00 AM');
   const [isEmergency, setIsEmergency] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('sinpe'); // 'sinpe', 'card', 'cash'
   const [notes, setNotes] = useState('');
 
   if (!handyman) return null;
 
-  const baseTotal = handyman.hourlyRateCRC * selectedHours;
+  // Base visit and diagnostic fee
+  const baseTotal = handyman.hourlyRateCRC || 15000;
   const emergencyFee = isEmergency ? 5000 : 0;
   const grandTotalCRC = baseTotal + emergencyFee;
 
@@ -35,13 +36,14 @@ export default function HandymanDetailModal({
   const handleBooking = () => {
     onConfirmBooking({
       handyman,
-      hours: selectedHours,
+      timeSlot: isEmergency ? 'Atención Inmediata de Emergencia' : selectedTimeSlot,
       totalCRC: grandTotalCRC,
       paymentMethod: selectedPayment,
       isEmergency,
       notes
     });
   };
+
 
   return (
     <div className="fixed inset-0 z-50 bg-[#1c1b1b]/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto animate-fade-in">
@@ -239,53 +241,80 @@ export default function HandymanDetailModal({
           {/* MODE 2: COTIZAR & RESERVAR VIEW */}
           {modalMode === 'book' && (
             <div className="space-y-4 animate-fade-in">
-              {/* SERVICE CALCULATOR & HOURS SELECTION */}
+              {/* SCHEDULE & APPOINTMENT TIME SELECTION */}
               <div className="bg-[#f6f3f2] dark:bg-[#222926] rounded-2xl p-4 border border-[#e5e2e1] dark:border-[#2e3633] space-y-3">
-                <h4 className="text-xs uppercase font-extrabold tracking-wider text-[#1c1b1b] dark:text-white">
-                  Duración & Cotización del Servicio
+                <h4 className="text-xs uppercase font-extrabold tracking-wider text-[#1c1b1b] dark:text-white flex items-center justify-between">
+                  <span>Horario & Modalidad del Servicio</span>
+                  <span className="text-[10px] text-[#e5a93c] bg-[#fef8ec] dark:bg-[#332408] border border-[#fdbe50] px-2 py-0.5 rounded-full font-bold">
+                    Visita & Diagnóstico
+                  </span>
                 </h4>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-[#414846] dark:text-[#a9acaa]">Duración estimada:</span>
-                  <div className="flex items-center space-x-2">
-                    {[1, 2, 3, 4].map((h) => (
-                      <button
-                        key={h}
-                        onClick={() => setSelectedHours(h)}
-                        className={`w-9 h-9 rounded-xl text-xs font-black transition-all ${
-                          selectedHours === h
-                            ? 'bg-white dark:bg-[#1a201d] border-2 border-[#033028] dark:border-[#e5a93c] text-[#033028] dark:text-[#a5cfc4] shadow-sm scale-105'
-                            : 'bg-white dark:bg-[#1a201d] border border-[#c0c8c5] dark:border-[#414846] text-[#1c1b1b] dark:text-[#f3f0ef] hover:bg-[#f0eded]'
-                        }`}
-                      >
-                        {h}h
-                      </button>
-                    ))}
+                {/* Emergency Toggle Card */}
+                <div 
+                  onClick={() => setIsEmergency(!isEmergency)}
+                  className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                    isEmergency 
+                      ? 'bg-[#fff5f5] dark:bg-[#321616] border-[#ff8a8a] text-[#b91c1c] dark:text-[#ffb4ab] shadow-sm'
+                      : 'bg-white dark:bg-[#1a201d] border-[#c0c8c5] dark:border-[#414846] text-[#1c1b1b] dark:text-[#f3f0ef] hover:bg-[#f0eded]'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${isEmergency ? 'bg-[#b91c1c] text-white' : 'bg-[#f0eded] dark:bg-[#222926] text-[#717976]'}`}>
+                      🚨
+                    </div>
+                    <div>
+                      <span className="text-xs font-black block">Atención Inmediata de Emergencia</span>
+                      <span className="text-[10px] opacity-80 block">Llegada prioritaria en 15 - 30 min (+₡5,000 CRC)</span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Emergency Checkbox */}
-                <label className="flex items-center space-x-2 text-xs font-semibold text-[#1c1b1b] dark:text-[#f3f0ef] cursor-pointer pt-1">
                   <input
                     type="checkbox"
                     checked={isEmergency}
-                    onChange={(e) => setIsEmergency(e.target.checked)}
-                    className="w-4 h-4 text-[#033028] rounded border-[#c0c8c5] focus:ring-[#033028]"
+                    onChange={() => {}}
+                    className="w-4 h-4 text-[#b91c1c] rounded border-[#c0c8c5] focus:ring-[#b91c1c]"
                   />
-                  <span>Atención Inmediata de Emergencia (+₡5,000 CRC)</span>
-                </label>
+                </div>
+
+                {/* Time Slot Selection (If not emergency) */}
+                {!isEmergency && (
+                  <div>
+                    <label className="text-xs font-bold text-[#414846] dark:text-[#a9acaa] block mb-1.5">
+                      Hora preferida para la llegada:
+                    </label>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {['08:00 AM', '10:00 AM', '02:00 PM', '04:00 PM'].map((slot) => (
+                        <button
+                          key={slot}
+                          onClick={() => setSelectedTimeSlot(slot)}
+                          className={`py-2 rounded-xl text-[11px] font-extrabold transition-all ${
+                            selectedTimeSlot === slot
+                              ? 'bg-white dark:bg-[#1a201d] border-2 border-[#033028] dark:border-[#e5a93c] text-[#033028] dark:text-[#a5cfc4] shadow-sm scale-105'
+                              : 'bg-white dark:bg-[#1a201d] border border-[#c0c8c5] dark:border-[#414846] text-[#1c1b1b] dark:text-[#f3f0ef] hover:bg-[#f0eded]'
+                          }`}
+                        >
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Notes Input */}
                 <div>
+                  <label className="text-xs font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">
+                    ¿Qué trabajo necesitas realizar?
+                  </label>
                   <input
                     type="text"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Detalle breve del trabajo (ej: fuga debajo de la pila)"
+                    placeholder="Ej: Fuga bajo la pila, cambiar enchufe, llave rota..."
                     className="w-full text-xs p-2.5 rounded-xl border border-[#c0c8c5] dark:border-[#414846] bg-white dark:bg-[#1a201d] focus:outline-none focus:ring-2 focus:ring-[#033028] text-[#1c1b1b] dark:text-white"
                   />
                 </div>
               </div>
+
 
               {/* PAYMENT METHOD SELECTION */}
               <div>
