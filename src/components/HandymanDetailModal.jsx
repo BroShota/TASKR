@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, Star, ShieldCheck, MapPin, Clock, Wrench, Phone, MessageSquare, 
-  CreditCard, Smartphone, Banknote, Navigation, CheckCircle2, AlertCircle, ChevronRight
+  CreditCard, Smartphone, Banknote, Navigation, CheckCircle2, AlertCircle, ChevronRight, Check
 } from 'lucide-react';
 
 export default function HandymanDetailModal({ 
