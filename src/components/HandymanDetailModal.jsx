@@ -263,27 +263,7 @@ export default function HandymanDetailModal({
                 </div>
               </div>
 
-              {/* COMMUNICATION BUTTONS */}
-              <div className="bg-[#f6f3f2] dark:bg-[#222926] rounded-2xl p-3 flex gap-2 border border-[#e5e2e1] dark:border-[#2e3633]">
-                <a
-                  href={`tel:${handyman.phone}`}
-                  className="flex-1 bg-white dark:bg-[#1a201d] hover:bg-[#f0eded] dark:hover:bg-[#2a332f] text-[#1c1b1b] dark:text-white font-bold py-2.5 px-3 rounded-xl border border-[#c0c8c5] dark:border-[#414846] text-xs flex items-center justify-center space-x-2 transition-colors shadow-sm"
-                >
-                  <Phone className="w-4 h-4 text-[#033028] dark:text-[#a5cfc4]" />
-                  <span>Llamar Técnico</span>
-                </a>
 
-                <button
-                  onClick={() => {
-                    onClose();
-                    onOpenChat(handyman);
-                  }}
-                  className="flex-1 bg-[#033028] dark:bg-[#1e463e] hover:bg-[#1e463e] dark:hover:bg-[#264e45] text-white font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-sm transition-colors"
-                >
-                  <MessageSquare className="w-4 h-4 text-[#e5a93c]" />
-                  <span>Chat en Vivo</span>
-                </button>
-              </div>
 
               {/* BIO & CERTIFICATIONS */}
               <div>
