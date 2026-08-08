@@ -523,98 +523,184 @@ export default function HandymanDetailModal({
                   </div>
                 )}
 
-                {/* TARJETA Ficticia Selection Box */}
+                {/* TARJETA Ficticia Ultra-Premium Wallet Selection */}
                 {selectedPayment === 'card' && (
-                  <div className="mt-2.5 bg-[#f6f3f2] dark:bg-[#222926] border border-[#e5e2e1] dark:border-[#2e3633] rounded-2xl p-3 space-y-2.5">
+                  <div className="mt-3 bg-gradient-to-b from-[#f8f6f5] to-[#ece8e6] dark:from-[#222926] dark:to-[#161c1a] border border-[#d8d0cd] dark:border-[#2e3633] rounded-3xl p-4 space-y-3 shadow-md">
+                    
+                    {/* Header bar */}
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-black uppercase text-[#1c1b1b] dark:text-white flex items-center gap-1">
-                        <CreditCard className="w-3.5 h-3.5 text-[#e5a93c]" />
-                        Selecciona Tarjeta Ficticia
+                      <span className="text-[11px] font-black uppercase tracking-wider text-[#1c1b1b] dark:text-white flex items-center gap-1.5">
+                        <CreditCard className="w-4 h-4 text-[#e5a93c]" />
+                        Billetera Digital • Tarjeta Ficticia
                       </span>
                       <button
                         onClick={() => setShowAddCardForm(!showAddCardForm)}
-                        className="text-[10px] font-extrabold text-[#033028] dark:text-[#a5cfc4] hover:underline"
+                        className="text-[11px] font-extrabold text-[#033028] dark:text-[#e5a93c] bg-white dark:bg-[#1a201d] px-2.5 py-1 rounded-full border border-[#c0c8c5] dark:border-[#414846] hover:scale-105 transition-all shadow-xs"
                       >
                         {showAddCardForm ? '← Volver' : '+ Nueva Tarjeta'}
                       </button>
                     </div>
 
                     {!showAddCardForm ? (
-                      <div className="space-y-1.5">
-                        {cardsList.map((card) => {
-                          const isSelected = selectedCardId === card.id;
+                      <div className="space-y-3">
+                        {/* ── REALISTIC CREDIT CARD 3D MOCKUP ── */}
+                        {(() => {
+                          const activeCard = cardsList.find(c => c.id === selectedCardId) || cardsList[0];
                           return (
-                            <div
-                              key={card.id}
-                              onClick={() => setSelectedCardId(card.id)}
-                              className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between bg-gradient-to-r ${card.color} text-white ${
-                                isSelected
-                                  ? 'ring-2 ring-[#e5a93c] shadow-md scale-[1.01]'
-                                  : 'opacity-85 hover:opacity-100'
-                              }`}
-                            >
-                              <div className="flex items-center space-x-2.5">
-                                <div className="w-7 h-5 rounded bg-white/20 flex items-center justify-center text-[9px] font-black tracking-tighter">
-                                  {card.badge}
-                                </div>
+                            <div className={`relative w-full rounded-2xl p-4 text-white shadow-xl overflow-hidden transition-all duration-500 bg-gradient-to-br ${activeCard.color} border border-white/20 ring-1 ring-white/10`}>
+                              
+                              {/* Background Gold Shine Accent */}
+                              <div className="absolute -top-12 -right-12 w-36 h-36 bg-[#e5a93c]/20 rounded-full blur-2xl pointer-events-none" />
+                              <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none" />
+
+                              {/* Card Top Row: Bank Name & Brand Badge */}
+                              <div className="flex items-center justify-between mb-4 relative z-10">
                                 <div>
-                                  <div className="flex items-center space-x-1.5">
-                                    <span className="text-xs font-black">{card.bank}</span>
-                                    <span className="text-[9px] opacity-75 font-mono">{card.numberMasked}</span>
-                                  </div>
-                                  <span className="text-[10px] opacity-80 block">{card.holder} • Vence {card.expiry}</span>
+                                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#e5a93c] block">
+                                    {activeCard.type}
+                                  </span>
+                                  <h5 className="text-xs font-black tracking-wide text-white drop-shadow-xs">
+                                    {activeCard.bank}
+                                  </h5>
+                                </div>
+                                <div className="px-2.5 py-1 rounded-lg bg-white/15 backdrop-blur-md border border-white/30 text-[10px] font-black uppercase tracking-widest text-white shadow-xs">
+                                  {activeCard.badge}
                                 </div>
                               </div>
 
-                              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-[#e5a93c] bg-[#e5a93c]' : 'border-white/50'}`}>
-                                {isSelected && <Check className="w-2.5 h-2.5 text-[#1c1b1b]" />}
+                              {/* EMV Metallic Chip & Contactless Symbol */}
+                              <div className="flex items-center space-x-3 mb-4 relative z-10">
+                                <div className="w-9 h-6 rounded-md bg-gradient-to-tr from-amber-300 via-yellow-400 to-amber-200 border border-amber-500/60 shadow-inner flex items-center justify-center relative overflow-hidden">
+                                  <div className="w-full h-[1px] bg-amber-600/40 absolute top-2" />
+                                  <div className="w-[1px] h-full bg-amber-600/40 absolute left-3" />
+                                </div>
+                                <svg className="w-5 h-5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M8.5 14.5A5 5 0 0 0 8.5 9.5" />
+                                  <path d="M12 17A9 9 0 0 0 12 7" />
+                                  <path d="M15.5 19.5A13 13 0 0 0 15.5 4.5" />
+                                </svg>
+                              </div>
+
+                              {/* Card Number (Relief font) */}
+                              <div className="font-mono text-base font-black tracking-widest text-white drop-shadow-md mb-3 relative z-10">
+                                {activeCard.numberMasked}
+                              </div>
+
+                              {/* Card Footer: Holder & Expiry */}
+                              <div className="flex items-center justify-between text-[10px] relative z-10 pt-1 border-t border-white/15">
+                                <div>
+                                  <span className="text-[8px] uppercase tracking-wider text-white/70 block font-semibold">Titular</span>
+                                  <span className="font-extrabold uppercase tracking-wide text-white">{activeCard.holder}</span>
+                                </div>
+                                <div className="text-right">
+                                  <span className="text-[8px] uppercase tracking-wider text-white/70 block font-semibold">Vence</span>
+                                  <span className="font-mono font-extrabold text-white">{activeCard.expiry}</span>
+                                </div>
                               </div>
                             </div>
                           );
-                        })}
+                        })()}
+
+                        {/* ── CARD SELECTOR HORIZONTAL PILLS ── */}
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#414846] dark:text-[#a9acaa] block">
+                            Cambiar Tarjeta Registrada:
+                          </span>
+                          <div className="grid grid-cols-3 gap-2">
+                            {cardsList.map((card) => {
+                              const isSelected = selectedCardId === card.id;
+                              return (
+                                <button
+                                  key={card.id}
+                                  onClick={() => setSelectedCardId(card.id)}
+                                  className={`p-2 rounded-xl text-left border transition-all ${
+                                    isSelected
+                                      ? 'bg-white dark:bg-[#1a201d] border-2 border-[#033028] dark:border-[#e5a93c] text-[#033028] dark:text-white shadow-sm font-black'
+                                      : 'bg-white dark:bg-[#1a201d] border border-[#c0c8c5] dark:border-[#414846] text-[#414846] dark:text-[#a9acaa] hover:bg-white/80'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between text-[9px] mb-0.5">
+                                    <span className="font-bold truncate">{card.badge}</span>
+                                    {isSelected && <Check className="w-3 h-3 text-[#e5a93c] shrink-0" />}
+                                  </div>
+                                  <span className="text-[10px] font-mono font-bold block truncate">
+                                    {card.numberMasked.slice(-8)}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
                       </div>
                     ) : (
-                      <form onSubmit={handleAddNewCard} className="space-y-2 bg-white dark:bg-[#1a201d] p-3 rounded-xl border border-[#c0c8c5] dark:border-[#414846]">
-                        <p className="text-[11px] font-bold text-[#1c1b1b] dark:text-white mb-1">Agregar Tarjeta Ficticia de Prueba</p>
+                      /* ── NEW CARD FORM ── */
+                      <form onSubmit={handleAddNewCard} className="space-y-2.5 bg-white dark:bg-[#1a201d] p-3.5 rounded-2xl border border-[#c0c8c5] dark:border-[#414846] shadow-sm">
+                        <p className="text-xs font-black text-[#1c1b1b] dark:text-white border-b border-[#e5e2e1] dark:border-[#2e3633] pb-1.5">
+                          💳 Registrar Nueva Tarjeta Ficticia
+                        </p>
+                        
                         <div>
+                          <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">Nombre en la tarjeta:</label>
                           <input
                             type="text"
-                            placeholder="Número de tarjeta (ej: 4532 8901 2345 6789)"
+                            placeholder="Ej: Ana Solís"
+                            value={newCardName}
+                            onChange={(e) => setNewCardName(e.target.value)}
+                            className="w-full text-xs p-2 rounded-xl border border-[#c0c8c5] dark:border-[#414846] bg-[#fdfcfb] dark:bg-[#222926] font-semibold text-[#1c1b1b] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#033028]"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">Número de tarjeta (16 dígitos ficticios):</label>
+                          <input
+                            type="text"
+                            placeholder="4532 8901 2345 6789"
                             value={newCardNumber}
                             onChange={(e) => setNewCardNumber(e.target.value)}
-                            className="w-full text-xs p-2 rounded-lg border border-[#c0c8c5] dark:border-[#414846] bg-white dark:bg-[#222926] text-[#1c1b1b] dark:text-white"
+                            className="w-full text-xs p-2 rounded-xl border border-[#c0c8c5] dark:border-[#414846] bg-[#fdfcfb] dark:bg-[#222926] font-mono font-bold text-[#1c1b1b] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#033028]"
                             required
                           />
                         </div>
+
                         <div className="grid grid-cols-2 gap-2">
-                          <input
-                            type="text"
-                            placeholder="Expira (MM/YY)"
-                            value={newCardExpiry}
-                            onChange={(e) => setNewCardExpiry(e.target.value)}
-                            className="w-full text-xs p-2 rounded-lg border border-[#c0c8c5] dark:border-[#414846] bg-white dark:bg-[#222926] text-[#1c1b1b] dark:text-white"
-                            required
-                          />
-                          <input
-                            type="password"
-                            maxLength="4"
-                            placeholder="CVC (123)"
-                            value={newCardCvc}
-                            onChange={(e) => setNewCardCvc(e.target.value)}
-                            className="w-full text-xs p-2 rounded-lg border border-[#c0c8c5] dark:border-[#414846] bg-white dark:bg-[#222926] text-[#1c1b1b] dark:text-white"
-                            required
-                          />
+                          <div>
+                            <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">Expiración:</label>
+                            <input
+                              type="text"
+                              placeholder="MM/YY (ej: 08/28)"
+                              value={newCardExpiry}
+                              onChange={(e) => setNewCardExpiry(e.target.value)}
+                              className="w-full text-xs p-2 rounded-xl border border-[#c0c8c5] dark:border-[#414846] bg-[#fdfcfb] dark:bg-[#222926] font-mono font-semibold text-[#1c1b1b] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#033028]"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">CVC:</label>
+                            <input
+                              type="password"
+                              maxLength="4"
+                              placeholder="123"
+                              value={newCardCvc}
+                              onChange={(e) => setNewCardCvc(e.target.value)}
+                              className="w-full text-xs p-2 rounded-xl border border-[#c0c8c5] dark:border-[#414846] bg-[#fdfcfb] dark:bg-[#222926] font-mono font-semibold text-[#1c1b1b] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#033028]"
+                              required
+                            />
+                          </div>
                         </div>
+
                         <button
                           type="submit"
-                          className="w-full bg-[#033028] dark:bg-[#e5a93c] text-white dark:text-[#1c1b1b] font-black text-xs py-2 rounded-lg shadow-xs"
+                          className="w-full bg-[#033028] hover:bg-[#1e463e] dark:bg-[#e5a93c] dark:hover:bg-[#d4982b] text-white dark:text-[#1c1b1b] font-black text-xs py-2.5 rounded-xl shadow-md transition-all mt-1"
                         >
-                          Guardar Tarjeta Ficticia
+                          Guardar y Seleccionar Tarjeta
                         </button>
                       </form>
                     )}
                   </div>
                 )}
+
 
 
 
