@@ -447,15 +447,16 @@ export default function HandymanDetailModal({
                 {/* SINPE Móvil Highlight Box */}
                 {selectedPayment === 'sinpe' && (
                   <div className="mt-2.5 p-3 rounded-xl bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] text-[#033028] dark:text-[#a5cfc4] text-xs flex items-start space-x-2">
-                    <Smartphone className="w-4 h-4 text-[#033028] dark:text-[#e5a93c] shrink-0 mt-0.5" />
+                    <ShieldCheck className="w-4 h-4 text-[#033028] dark:text-[#e5a93c] shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">Número SINPE Móvil del Técnico: <span className="underline font-mono text-[#033028] dark:text-white">{handyman.sinpeNumber}</span></p>
+                      <p className="font-bold">Pago Seguro por SINPE Móvil</p>
                       <p className="text-[11px] text-[#414846] dark:text-[#a9acaa] mt-0.5">
-                        Podrás enviar el comprobante directamente en el chat una vez reservado.
+                        Los datos para realizar la transferencia se enviarán de forma privada una vez confirmada la cita.
                       </p>
                     </div>
                   </div>
                 )}
+
               </div>
             </div>
           )}
