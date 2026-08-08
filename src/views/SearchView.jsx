@@ -113,13 +113,21 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              if (selectedCategory !== 'all') {
+                setSelectedCategory('all');
+              }
+            }}
             placeholder='Ej: "el microondas malo", "se fue la luz", "tubo roto"...'
             className="w-full bg-white dark:bg-[#1a201d] text-[#1c1b1b] dark:text-white rounded-full pl-11 pr-10 py-2.5 text-xs font-semibold placeholder:text-[#717976] dark:placeholder:text-[#a9acaa] card-shadow border border-[#c0c8c5] dark:border-[#414846] focus:outline-none focus:ring-2 focus:ring-[#033028] dark:focus:ring-[#e5a93c]"
           />
           {searchTerm && (
             <button
-              onClick={() => setSearchTerm('')}
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedCategory('all');
+              }}
               className="absolute right-3 top-3 text-[#717976] dark:text-[#a9acaa] hover:text-[#1c1b1b] dark:hover:text-white"
             >
               <X className="w-4 h-4" />
@@ -134,11 +142,6 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
             <div className="flex-1 min-w-0">
               <p className="text-[11px] font-bold text-[#033028] dark:text-[#a5cfc4] mb-1.5">
                 {semantic.interpreted}
-                {semantic.fuzzyToken && (
-                  <span className="ml-1.5 font-normal text-[#717976] dark:text-[#a9acaa]">
-                    (reconocimos "<em>{semantic.fuzzyToken.original}</em>" → {semantic.fuzzyToken.suggested})
-                  </span>
-                )}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {semantic.categories.map(catId => {
@@ -158,6 +161,7 @@ export default function SearchView({ onSelectHandyman, onQuickBook }) {
             </div>
           </div>
         )}
+
 
 
         {/* Low confidence fallback notice */}
