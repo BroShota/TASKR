@@ -254,8 +254,11 @@ export default function App() {
             <div className="flex-1 overflow-y-auto">
               {activeTab === 'search' && (
                 <SearchView
+                  citas={citasList}
+                  client={client}
                   onSelectHandyman={handleSelectHandyman}
                   onQuickBook={handleQuickBook}
+                  onOpenChat={(h) => setChatHandyman(h)}
                 />
               )}
 

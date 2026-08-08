@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Wrench, CheckCircle2, XCircle, Clock, MapPin, Navigation, Phone, 
   MessageSquare, DollarSign, ShieldCheck, Star, Calendar, FileText, 
-  Power, TrendingUp, AlertTriangle, ArrowRight, UserCheck, Sparkles, Check 
+  Power, TrendingUp, AlertTriangle, ArrowRight, UserCheck, Sparkles, Check, Key
 } from 'lucide-react';
 import { HANDYMEN } from '../data/mockData';
 
@@ -11,15 +11,16 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
   const [isOnline, setIsOnline] = useState(true);
   const [activeTab, setActiveTab] = useState('requests'); // 'requests', 'active_job', 'earnings'
   const [jobStatus, setJobStatus] = useState('accepted'); // 'accepted', 'arrived', 'completed'
-  const [showPayoutSuccess, setShowPayoutSuccess] = useState(false);
-  const [activeJobCita, setActiveJobCita] = useState(null);
+  const [showPayoutSuccess, setShowPayoutSuccess] = useState(false);  const [activeJobCita, setActiveJobCita] = useState(null);
   const [showAdjustPriceModal, setShowAdjustPriceModal] = useState(false);
   const [adjustedPrice, setAdjustedPrice] = useState('');
+  const [enteredPin, setEnteredPin] = useState('');
+  const [isPinVerified, setIsPinVerified] = useState(false);
+  const [repairDate, setRepairDate] = useState('');
 
   // Technician Payment Acceptance Autonomy
   const [acceptsSinpe, setAcceptsSinpe] = useState(partnerHandyman.acceptsSinpe ?? true);
   const [acceptsCash, setAcceptsCash] = useState(partnerHandyman.acceptsCash ?? true);
-
 
   const formatCRC = (amount) => {
     return new Intl.NumberFormat('es-CR', {
@@ -29,23 +30,39 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
     }).format(amount || 0);
   };
 
+  const handleRejectRequest = async (reqCita) => {
+    if (onUpdateCitaStatus) {
+      await onUpdateCitaStatus(reqCita.id, {
+        status: 'Rechazada por Técnico - Buscando alternativa'
+      });
+    }
+  };
+
   const handleSaveAdjustedPrice = async () => {
     const priceNum = parseInt(adjustedPrice.replace(/\D/g, ''), 10);
     if (!priceNum || isNaN(priceNum)) return;
 
     if (activeJobCita && onUpdateCitaStatus) {
+      const newStatus = repairDate 
+        ? `Reparación Programada el ${repairDate} (₡${priceNum.toLocaleString('es-CR')} CRC)`
+        : `En Proceso (Cotización ₡${priceNum.toLocaleString('es-CR')} CRC)`;
+
       await onUpdateCitaStatus(activeJobCita.id, {
         totalCRC: priceNum,
-        status: `En Proceso`
+        scheduledDate: repairDate || activeJobCita.scheduledDate,
+        status: newStatus
       });
       setActiveJobCita({
         ...activeJobCita,
-        totalCRC: priceNum
+        totalCRC: priceNum,
+        scheduledDate: repairDate || activeJobCita.scheduledDate,
+        status: newStatus
       });
     }
     setShowAdjustPriceModal(false);
     setAdjustedPrice('');
   };
+;
 
 
   // Citas pending assignment or offered to this handyman
@@ -403,7 +420,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
               </button>
             </div>
 
-            {/* Progress Actions */}
+            {/* Progress Actions & PIN Verification */}
             {jobStatus === 'accepted' ? (
               <button
                 onClick={() => setJobStatus('arrived')}
@@ -412,7 +429,56 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
                 1. MARCAR LLEGADA A CASETA DEL CONDOMINIO
               </button>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
+                {/* 🔑 PIN VERIFICATION FOR ARRIVAL SECURITY */}
+                {!isPinVerified ? (
+                  <div className="bg-[#fff8ed] dark:bg-[#2a1f10] border border-[#f5c77a] dark:border-[#5c3d1a] rounded-2xl p-3.5 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-extrabold text-[#7a4f00] dark:text-[#f0c97a]">
+                      <span className="flex items-center gap-1.5">
+                        <Key className="w-4 h-4 text-[#e5a93c]" />
+                        Confirmación de Seguridad de Llegada (PIN)
+                      </span>
+                      <span className="text-[10px] bg-[#e5a93c] text-[#1c1b1b] px-1.5 py-0.5 rounded font-black">REQUERIDO</span>
+                    </div>
+                    <p className="text-[11px] text-[#414846] dark:text-[#a9acaa] leading-tight">
+                      Solicita al residente su PIN de 4 dígitos para validar tu presencia física a la puerta:
+                    </p>
+                    <div className="flex space-x-2">
+                      <input
+                        type="password"
+                        maxLength="4"
+                        placeholder="PIN (4 dígitos)"
+                        value={enteredPin}
+                        onChange={(e) => setEnteredPin(e.target.value)}
+                        className="flex-1 bg-white dark:bg-[#1a201d] border border-[#c0c8c5] dark:border-[#414846] rounded-xl px-3 py-2 text-center text-sm font-mono font-black text-[#033028] dark:text-white"
+                      />
+                      <button
+                        onClick={() => {
+                          if (enteredPin.length >= 4) {
+                            setIsPinVerified(true);
+                            if (onUpdateCitaStatus && activeJobCita) {
+                              onUpdateCitaStatus(activeJobCita.id, {
+                                status: 'En Sitio - PIN Verificado'
+                              });
+                            }
+                          }
+                        }}
+                        className="bg-[#033028] dark:bg-[#e5a93c] text-white dark:text-[#1c1b1b] font-black text-xs px-4 py-2 rounded-xl shadow-xs"
+                      >
+                        Validar PIN
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] rounded-2xl p-2.5 flex items-center justify-between text-xs text-[#033028] dark:text-[#a5cfc4] font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                      PIN Verificado • Presencia Física Confirmada
+                    </span>
+                    <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full">OK</span>
+                  </div>
+                )}
+
                 <button
                   onClick={() => {
                     setAdjustedPrice(activeJobCita?.totalCRC?.toString() || '18000');
@@ -421,7 +487,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
                   className="w-full bg-white dark:bg-[#1a201d] hover:bg-[#f0f7f5] text-[#033028] dark:text-[#e5a93c] font-black py-2.5 px-3 rounded-xl border border-[#033028] dark:border-[#e5a93c] text-xs flex items-center justify-center space-x-1.5 shadow-xs"
                 >
                   <DollarSign className="w-4 h-4 text-[#e5a93c]" />
-                  <span>✏️ Cotizar / Ajustar Presupuesto Final en Sitio</span>
+                  <span>✏️ Cotizar / Programar Presupuesto Final en Sitio</span>
                 </button>
 
                 <button
@@ -429,7 +495,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-4 rounded-2xl text-xs shadow-md transition-all uppercase tracking-wider flex items-center justify-center space-x-2"
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>2. FINALIZAR TRABAJO & COBRAR ({formatCRC(activeJobCita?.totalCRC || 18000)})</span>
+                  <span>FINALIZAR TRABAJO & COBRAR ({formatCRC(activeJobCita?.totalCRC || 18000)})</span>
                 </button>
               </div>
             )}
@@ -438,24 +504,24 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
         </div>
       )}
 
-      {/* Adjust Site Price Modal */}
+      {/* Adjust Site Price & Re-schedule Repair Modal */}
       {showAdjustPriceModal && (
         <div className="fixed inset-0 z-50 bg-[#1c1b1b]/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-[#1a201d] rounded-3xl p-5 max-w-sm w-full border border-[#e5e2e1] dark:border-[#2e3633] space-y-4 shadow-2xl">
             <div className="flex items-center justify-between border-b border-[#e5e2e1] dark:border-[#2e3633] pb-2">
               <h4 className="font-black text-sm text-[#1c1b1b] dark:text-white flex items-center gap-1.5">
                 <DollarSign className="w-4 h-4 text-[#e5a93c]" />
-                Cotización / Presupuesto Final en Sitio
+                Presupuesto & Fecha de Reparación
               </h4>
               <button onClick={() => setShowAdjustPriceModal(false)} className="text-gray-400 hover:text-gray-600">✕</button>
             </div>
 
             <p className="text-xs text-[#414846] dark:text-[#a9acaa]">
-              Ingresa el monto total acordado con el residente tras evaluar el trabajo completo (ej. Pintura completa ₡300,000):
+              Ingresa el monto total acordado con el residente tras evaluar el trabajo (ej. Pintura completa ₡300,000):
             </p>
 
             <div>
-              <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">Monto Total en Colones (CRC):</label>
+              <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">Monto Total Acordado (CRC):</label>
               <div className="relative flex items-center">
                 <span className="absolute left-3 text-sm font-black text-[#033028] dark:text-[#e5a93c]">₡</span>
                 <input
@@ -466,6 +532,18 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
                   className="w-full bg-[#fdfcfb] dark:bg-[#222926] border-2 border-[#033028] dark:border-[#e5a93c] rounded-xl pl-8 pr-3 py-2 text-sm font-black text-[#033028] dark:text-white focus:outline-none"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-[#414846] dark:text-[#a9acaa] block mb-1">
+                ¿Reagendar fecha para ejecutar la reparación? (Opcional):
+              </label>
+              <input
+                type="date"
+                value={repairDate}
+                onChange={(e) => setRepairDate(e.target.value)}
+                className="w-full text-xs p-2 rounded-xl border border-[#c0c8c5] dark:border-[#414846] bg-[#fdfcfb] dark:bg-[#222926] font-bold text-[#1c1b1b] dark:text-white focus:outline-none"
+              />
             </div>
 
             <div className="flex space-x-2 pt-2">
@@ -485,6 +563,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
           </div>
         </div>
       )}
+
 
 
       {/* TAB 3: EARNINGS & WALLET */}
