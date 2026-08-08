@@ -50,6 +50,8 @@ export const HANDYMEN = [
     avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&auto=format&fit=crop&q=80",
     phone: "+506 8311-9201",
     sinpeNumber: "8311-9201",
+    acceptsSinpe: true,
+    acceptsCash: true,
     ownTools: true,
     availability: "Hoy / Inmediata",
     estimatedArrivalMins: 15,

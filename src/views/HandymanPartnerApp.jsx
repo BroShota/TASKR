@@ -14,6 +14,11 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
   const [showPayoutSuccess, setShowPayoutSuccess] = useState(false);
   const [activeJobCita, setActiveJobCita] = useState(null);
 
+  // Technician Payment Acceptance Autonomy
+  const [acceptsSinpe, setAcceptsSinpe] = useState(partnerHandyman.acceptsSinpe ?? true);
+  const [acceptsCash, setAcceptsCash] = useState(partnerHandyman.acceptsCash ?? true);
+
+
   const formatCRC = (amount) => {
     return new Intl.NumberFormat('es-CR', {
       style: 'currency',
@@ -117,7 +122,40 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
             <span className="font-black text-sm text-[#033028] dark:text-[#a5cfc4]">2 Exitosos</span>
           </div>
         </div>
+
+        {/* Technician Payment Acceptance Settings */}
+        <div className="mt-2.5 bg-white dark:bg-[#1a201d] border border-[#e5e2e1] dark:border-[#2e3633] rounded-2xl p-2.5 space-y-1 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#414846] dark:text-[#a9acaa]">
+              Configuración de Cobro Directo (Autónomo)
+            </span>
+            <span className="text-[10px] text-[#033028] dark:text-[#a5cfc4] font-bold">Sin comisiones TASKR</span>
+          </div>
+
+          <div className="flex items-center space-x-4 pt-1">
+            <label className="flex items-center space-x-1.5 cursor-pointer text-[11px] font-bold text-[#1c1b1b] dark:text-white">
+              <input
+                type="checkbox"
+                checked={acceptsSinpe}
+                onChange={(e) => setAcceptsSinpe(e.target.checked)}
+                className="w-3.5 h-3.5 text-[#033028] rounded border-[#c0c8c5]"
+              />
+              <span>Acepto SINPE Móvil</span>
+            </label>
+
+            <label className="flex items-center space-x-1.5 cursor-pointer text-[11px] font-bold text-[#1c1b1b] dark:text-white">
+              <input
+                type="checkbox"
+                checked={acceptsCash}
+                onChange={(e) => setAcceptsCash(e.target.checked)}
+                className="w-3.5 h-3.5 text-[#033028] rounded border-[#c0c8c5]"
+              />
+              <span>Acepto Efectivo</span>
+            </label>
+          </div>
+        </div>
       </header>
+
 
       {/* Main Tab Navigation for Handyman Partner */}
       <div className="px-4 pt-3">

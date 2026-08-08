@@ -449,13 +449,27 @@ export default function HandymanDetailModal({
                   <div className="mt-2.5 p-3 rounded-xl bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] text-[#033028] dark:text-[#a5cfc4] text-xs flex items-start space-x-2">
                     <ShieldCheck className="w-4 h-4 text-[#033028] dark:text-[#e5a93c] shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">Pago Seguro por SINPE Móvil</p>
+                      <p className="font-bold">Pago Acordado Directamente por SINPE Móvil</p>
                       <p className="text-[11px] text-[#414846] dark:text-[#a9acaa] mt-0.5">
-                        Los datos para realizar la transferencia se enviarán de forma privada una vez confirmada la cita.
+                        El técnico decide si te facilita su número SINPE durante la atención o chat. TASKR no interfiere ni cobra comisiones en las transacciones directas entre cliente y profesional.
                       </p>
                     </div>
                   </div>
                 )}
+
+                {/* EFECTIVO Highlight Box */}
+                {selectedPayment === 'cash' && (
+                  <div className="mt-2.5 p-3 rounded-xl bg-[#f6f3f2] dark:bg-[#222926] border border-[#e5e2e1] dark:border-[#2e3633] text-[#1c1b1b] dark:text-[#f3f0ef] text-xs flex items-start space-x-2">
+                    <Banknote className="w-4 h-4 text-[#e5a93c] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold">Pago Directo en Efectivo</p>
+                      <p className="text-[11px] text-[#414846] dark:text-[#a9acaa] mt-0.5">
+                        Pagas en persona directamente al técnico al finalizar la visita. TASKR no interfiere en los pagos en efectivo.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
 
               </div>
             </div>
