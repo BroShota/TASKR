@@ -22,6 +22,7 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
     switch (iconName) {
       case 'Droplet': return <Droplet className="w-4 h-4" />;
       case 'Zap': return <Zap className="w-4 h-4" />;
+      case 'Key': return <Key className="w-4 h-4" />;
       case 'Hammer': return <Hammer className="w-4 h-4" />;
       case 'Paintbrush': return <Paintbrush className="w-4 h-4" />;
       case 'Trees': return <Trees className="w-4 h-4" />;
