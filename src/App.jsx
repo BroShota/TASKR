@@ -244,6 +244,8 @@ export default function App() {
             {/* Header Component */}
             <Header
               client={client}
+              citas={citasList}
+              onOpenChat={(h) => setChatHandyman(h)}
               onOpenIncidentModal={() => setIsIncidentModalOpen(true)}
               isDarkMode={isDarkMode}
               onToggleTheme={toggleTheme}

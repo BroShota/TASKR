@@ -107,69 +107,7 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
   return (
     <div className="space-y-4 pb-20">
       
-      {/* UPCOMING APPOINTMENT REMINDER CARD (Pantalla Principal - Minimalista & Elegante) */}
-      {activeUpcomingCita && (
-        <div className="mx-4 mt-3 bg-white dark:bg-[#1a201d] text-[#1c1b1b] dark:text-white rounded-2xl p-3.5 card-shadow border border-[#e5e2e1] dark:border-[#2e3633] space-y-2.5 transition-colors duration-300">
-          {/* Header Row: Bell + Title & Status */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 min-w-0">
-              <div className="w-7 h-7 rounded-xl bg-[#f0f7f5] dark:bg-[#162b25] text-[#033028] dark:text-[#e5a93c] flex items-center justify-center shrink-0">
-                <Bell className="w-3.5 h-3.5" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-extrabold text-xs text-[#1c1b1b] dark:text-white truncate">
-                  {activeUpcomingCita.serviceTitle || 'Servicio de Mantenimiento'}
-                </h3>
-                <p className="text-[10px] font-semibold text-[#717976] dark:text-[#a9acaa] flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-[#e5a93c]" />
-                  <span>{activeUpcomingCita.scheduledDate} • {activeUpcomingCita.scheduledTime}</span>
-                </p>
-              </div>
-            </div>
 
-            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full border shrink-0 ${
-              activeUpcomingCita.status === 'Pendiente'
-                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300/60 dark:border-amber-700/40'
-                : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300/60 dark:border-emerald-700/40'
-            }`}>
-              {activeUpcomingCita.status || 'Confirmada'}
-            </span>
-          </div>
-
-          {/* Details & PIN inline row */}
-          <div className="bg-[#f6f3f2] dark:bg-[#222926] rounded-xl p-2.5 flex items-center justify-between border border-[#e5e2e1] dark:border-[#2e3633] text-xs">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#414846] dark:text-[#a9acaa]">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#033028] dark:text-[#e5a93c]" />
-              <span>Técnico: <strong className="text-[#1c1b1b] dark:text-white">{activeUpcomingCita.assignedHandymanName || 'Mario Jiménez'}</strong></span>
-            </div>
-
-            <div className="flex items-center space-x-1.5 bg-white dark:bg-[#1a201d] px-2.5 py-1 rounded-lg border border-[#e5e2e1] dark:border-[#2e3633]">
-              <span className="text-[9px] font-bold uppercase text-[#717976] dark:text-[#a9acaa]">PIN:</span>
-              <span className="font-mono text-xs font-black text-[#033028] dark:text-[#e5a93c] tracking-wider">
-                {activeUpcomingCita.passCode ? activeUpcomingCita.passCode.slice(-4) : '4819'}
-              </span>
-            </div>
-          </div>
-
-          {/* Compact Actions */}
-          <div className="flex items-center space-x-2 pt-0.5">
-            <button
-              onClick={() => onOpenChat && onOpenChat(HANDYMEN[0])}
-              className="flex-1 bg-[#033028] dark:bg-[#1e463e] hover:bg-[#1e463e] text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-xs transition-all"
-            >
-              <MessageSquare className="w-3.5 h-3.5 text-[#e5a93c]" />
-              <span>Chat con Técnico</span>
-            </button>
-            <a
-              href="tel:+50688449911"
-              className="bg-[#f6f3f2] dark:bg-[#222926] hover:bg-[#e5e2e1] dark:hover:bg-[#2e3633] text-[#1c1b1b] dark:text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center space-x-1 border border-[#e5e2e1] dark:border-[#2e3633]"
-            >
-              <Phone className="w-3.5 h-3.5 text-[#033028] dark:text-[#a5cfc4]" />
-              <span>Llamar</span>
-            </a>
-          </div>
-        </div>
-      )}
 
       {/* Search & Immediate Emergency Hero Section */}
 
