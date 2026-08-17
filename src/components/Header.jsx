@@ -16,11 +16,13 @@ export default function Header({ client, citas = [], onOpenChat, onOpenIncidentM
       <div className="flex items-center justify-between">
         {/* Logo and Tagline */}
         <div className="flex items-center space-x-2.5">
-          <img
-            src="/logo.png"
-            alt="TASKR Logo"
-            className="w-9 h-9 object-contain drop-shadow-sm"
-          />
+          <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center p-1 shadow-sm border border-[#e5e2e1] dark:border-[#e5a93c]/50 shrink-0">
+            <img
+              src="/logo.png"
+              alt="TASKR Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
           <div>
             <div className="flex items-center space-x-1.5">
               <span className="font-extrabold text-lg tracking-tight text-[#1c1b1b] dark:text-white">TASKR</span>
