@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Server, Smartphone, Wrench, ShieldCheck, Activity, Users, CheckCircle2, QrCode, Filter, UserCheck } from 'lucide-react';
+import { Server, Smartphone, Wrench, ShieldCheck, Activity, Users, CheckCircle2, QrCode, Filter, UserCheck, Play } from 'lucide-react';
 import { HANDYMEN } from '../data/mockData';
+import DemoTour from '../components/DemoTour';
+import { SUPERVISOR_DEMO_STEPS } from '../data/demoSteps';
 
 export default function ServerMonitorView({ citas = [], isDarkMode, onToggleTheme, onUpdateCitaStatus }) {
   const baseUrl = window.location.origin;
@@ -10,6 +12,7 @@ export default function ServerMonitorView({ citas = [], isDarkMode, onToggleThem
 
 
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [showDemo, setShowDemo] = useState(false);
 
   const totalCitas = citas.length;
   const pendientes = citas.filter(c => c.status === 'Pendiente').length;
@@ -46,7 +49,7 @@ export default function ServerMonitorView({ citas = [], isDarkMode, onToggleThem
     <div className="min-h-screen bg-[#0b0e0d] text-white p-6 flex flex-col space-y-6 selection:bg-[#033028] selection:text-white">
       
       {/* Top Bar */}
-      <div className="flex items-center justify-between border-b border-[#2e3633] pb-4">
+      <div id="demo-supervisor-header" className="flex items-center justify-between border-b border-[#2e3633] pb-4">
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 rounded-2xl bg-[#033028] border border-[#e5a93c] flex items-center justify-center text-[#e5a93c] shadow-lg">
             <Server className="w-7 h-7" />
@@ -69,7 +72,7 @@ export default function ServerMonitorView({ citas = [], isDarkMode, onToggleThem
       </div>
 
       {/* Access Banner Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div id="demo-supervisor-links" className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Client Access Card (FOR JUDGES / CLIENTS) */}
         <div className="bg-[#121614] border-2 border-[#033028] hover:border-[#e5a93c] rounded-3xl p-5 shadow-xl flex flex-col justify-between space-y-3 transition-colors">
@@ -124,7 +127,7 @@ export default function ServerMonitorView({ citas = [], isDarkMode, onToggleThem
       </div>
 
       {/* Live Metrics Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div id="demo-supervisor-stats" className="grid grid-cols-4 gap-4">
         <div className="bg-[#121614] border border-[#2e3633] rounded-2xl p-4 text-center">
           <span className="text-xs text-[#a9acaa] uppercase font-bold block">Total Pedidos</span>
           <span className="text-3xl font-black text-white">{totalCitas}</span>
@@ -147,7 +150,7 @@ export default function ServerMonitorView({ citas = [], isDarkMode, onToggleThem
       </div>
 
       {/* Live Interactive Supervisor Order Table */}
-      <div className="bg-[#121614] border border-[#2e3633] rounded-3xl p-5 flex-1 flex flex-col space-y-4">
+      <div id="demo-supervisor-citas" className="bg-[#121614] border border-[#2e3633] rounded-3xl p-5 flex-1 flex flex-col space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
             <Activity className="w-5 h-5 text-emerald-400 animate-pulse" />
@@ -298,6 +301,27 @@ export default function ServerMonitorView({ citas = [], isDarkMode, onToggleThem
           </table>
         </div>
       </div>
+
+      {showDemo && (
+        <DemoTour
+          steps={SUPERVISOR_DEMO_STEPS}
+          roleName="Supervisor"
+          roleEmoji="🛡️"
+          onClose={() => setShowDemo(false)}
+        />
+      )}
+
+      {/* Floating Demo Button */}
+      {!showDemo && (
+        <button
+          onClick={() => setShowDemo(true)}
+          className="fixed bottom-6 right-6 z-40 bg-[#e5a93c] hover:bg-[#fdbe50] text-[#1c1b1b] font-black py-3 px-5 rounded-2xl text-xs shadow-xl flex items-center space-x-2 transition-all transform active:scale-95 border border-[#e5a93c]/50"
+          style={{ animation: 'pulse 2s infinite' }}
+        >
+          <Play className="w-4 h-4" />
+          <span>▶ Ver Demo</span>
+        </button>
+      )}
 
     </div>
   );

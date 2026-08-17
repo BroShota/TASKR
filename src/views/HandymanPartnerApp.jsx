@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { 
   Wrench, CheckCircle2, XCircle, Clock, MapPin, Navigation, Phone, 
   MessageSquare, DollarSign, ShieldCheck, Star, Calendar, FileText, 
-  Power, TrendingUp, AlertTriangle, ArrowRight, UserCheck, Sparkles, Check, Key
+  Power, TrendingUp, AlertTriangle, ArrowRight, UserCheck, Sparkles, Check, Key, Play
 } from 'lucide-react';
 import { HANDYMEN } from '../data/mockData';
+import DemoTour from '../components/DemoTour';
+import { HANDYMAN_DEMO_STEPS } from '../data/demoSteps';
 
 export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [], onUpdateCitaStatus }) {
   const [partnerHandyman, setPartnerHandyman] = useState(HANDYMEN[0]); // Mario Jiménez
@@ -17,6 +19,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
   const [enteredPin, setEnteredPin] = useState('');
   const [isPinVerified, setIsPinVerified] = useState(false);
   const [repairDate, setRepairDate] = useState('');
+  const [showDemo, setShowDemo] = useState(false);
 
   // Technician Payment Acceptance Autonomy
   const [acceptsSinpe, setAcceptsSinpe] = useState(partnerHandyman.acceptsSinpe ?? true);
@@ -109,7 +112,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
     <div className="flex flex-col h-full bg-[#fcf9f8] dark:bg-[#121614] text-[#1c1b1b] dark:text-[#f3f0ef] transition-colors duration-500 min-h-screen">
       
       {/* Handyman Partner Top Header */}
-      <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#1a201d]/95 backdrop-blur-md text-[#1c1b1b] dark:text-[#f3f0ef] p-4 shadow-xs border-b border-[#e5e2e1] dark:border-[#2e3633] transition-colors duration-500">
+      <header id="demo-handyman-header" className="sticky top-0 z-30 bg-white/95 dark:bg-[#1a201d]/95 backdrop-blur-md text-[#1c1b1b] dark:text-[#f3f0ef] p-4 shadow-xs border-b border-[#e5e2e1] dark:border-[#2e3633] transition-colors duration-500">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
@@ -138,6 +141,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
 
           {/* Online Status Toggle */}
           <button
+            id="demo-handyman-toggle"
             onClick={() => setIsOnline(!isOnline)}
             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs ${
               isOnline 
@@ -206,7 +210,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
 
 
       {/* Main Tab Navigation for Handyman Partner */}
-      <div className="px-4 pt-3">
+      <div id="demo-handyman-tabs" className="px-4 pt-3">
         <div className="flex bg-[#f0eded] dark:bg-[#222926] p-1 rounded-2xl text-xs font-bold border border-[#e5e2e1] dark:border-[#2e3633]">
           <button
             onClick={() => setActiveTab('requests')}
@@ -265,7 +269,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
 
       {/* TAB 1: INCOMING REQUESTS */}
       {activeTab === 'requests' && (
-        <div className="p-4 space-y-4 flex-1">
+        <div id="demo-handyman-requests" className="p-4 space-y-4 flex-1">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-black uppercase tracking-wider text-[#414846] dark:text-[#a9acaa]">
               Solicitudes de Citas del Servidor
@@ -596,6 +600,26 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
             </div>
           </div>
         </div>
+      )}
+
+      {showDemo && (
+        <DemoTour
+          steps={HANDYMAN_DEMO_STEPS}
+          roleName="Socio Técnico"
+          roleEmoji="🛠️"
+          onClose={() => setShowDemo(false)}
+        />
+      )}
+
+      {!showDemo && (
+        <button
+          onClick={() => setShowDemo(true)}
+          className="fixed bottom-6 right-6 z-40 bg-[#e5a93c] hover:bg-[#fdbe50] text-[#1c1b1b] font-black py-3 px-5 rounded-2xl text-xs shadow-xl flex items-center space-x-2 transition-all transform active:scale-95 border border-[#e5a93c]/50"
+          style={{ animation: 'pulse 2s infinite' }}
+        >
+          <Play className="w-4 h-4" />
+          <span>▶ Ver Demo</span>
+        </button>
       )}
 
     </div>

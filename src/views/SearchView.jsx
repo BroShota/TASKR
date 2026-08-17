@@ -2,13 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { 
   Search, Filter, MapPin, ArrowUpDown, Award, Wrench, Droplet, Zap, 
   Hammer, Paintbrush, Trees, Sparkles, Sliders, X, Check, ShieldCheck,
-  Lightbulb, Clock, Calendar, MessageSquare, Phone, Bell, Key
+  Lightbulb, Clock, Calendar, MessageSquare, Phone, Bell, Key, Play
 } from 'lucide-react';
 import HandymanCard from '../components/HandymanCard';
+import DemoTour from '../components/DemoTour';
 import { CATEGORIES, HANDYMEN, CONDO_ZONES } from '../data/mockData';
 import { semanticSearch, normalize } from '../data/searchDictionary';
+import { CLIENT_DEMO_STEPS } from '../data/demoSteps';
 
 export default function SearchView({ citas = [], client, onSelectHandyman, onQuickBook, onOpenChat }) {
+  const [showDemo, setShowDemo] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedZone, setSelectedZone] = useState('Todos los Condominios');
@@ -171,7 +174,7 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
 
       {/* Search & Immediate Emergency Hero Section */}
 
-      <div className="bg-gradient-to-b from-[#fcf9f8] via-[#f0f7f5] to-[#fcf9f8] dark:from-[#121614] dark:via-[#162b25] dark:to-[#121614] text-[#1c1b1b] dark:text-[#f3f0ef] p-4 pt-3 rounded-b-3xl border-b border-[#e5e2e1] dark:border-[#2e3633] card-shadow transition-colors duration-500">
+      <div id="demo-client-search" className="bg-gradient-to-b from-[#fcf9f8] via-[#f0f7f5] to-[#fcf9f8] dark:from-[#121614] dark:via-[#162b25] dark:to-[#121614] text-[#1c1b1b] dark:text-[#f3f0ef] p-4 pt-3 rounded-b-3xl border-b border-[#e5e2e1] dark:border-[#2e3633] card-shadow transition-colors duration-500">
         <h1 className="text-xl font-black mb-1 leading-tight text-[#1c1b1b] dark:text-white">
           ¿Qué reparación necesitas hoy?
         </h1>
@@ -248,7 +251,7 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
       </div>
 
       {/* Main Categories Horizontal Scroll */}
-      <div className="px-4">
+      <div id="demo-client-categories" className="px-4">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xs font-black uppercase tracking-wider text-[#414846] dark:text-[#a9acaa]">
             Categorías de Servicio
@@ -353,7 +356,7 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
       </div>
 
       {/* Handymen Results Count & List */}
-      <div className="px-4">
+      <div id="demo-client-results" className="px-4">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs text-[#414846] dark:text-[#a9acaa] font-semibold">
             Mostrando <strong className="text-[#1c1b1b] dark:text-white font-black">{filteredHandymen.length}</strong> profesionales verificados
@@ -393,6 +396,26 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
           </div>
         )}
       </div>
+
+      {showDemo && (
+        <DemoTour
+          steps={CLIENT_DEMO_STEPS}
+          roleName="Residente"
+          roleEmoji="📱"
+          onClose={() => setShowDemo(false)}
+        />
+      )}
+
+      {!showDemo && (
+        <button
+          onClick={() => setShowDemo(true)}
+          className="fixed bottom-24 right-4 z-40 bg-[#e5a93c] hover:bg-[#fdbe50] text-[#1c1b1b] font-black py-3 px-5 rounded-2xl text-xs shadow-xl flex items-center space-x-2 transition-all transform active:scale-95 border border-[#e5a93c]/50"
+          style={{ animation: 'pulse 2s infinite' }}
+        >
+          <Play className="w-4 h-4" />
+          <span>▶ Ver Demo</span>
+        </button>
+      )}
 
     </div>
   );
