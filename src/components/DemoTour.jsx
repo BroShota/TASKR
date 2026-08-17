@@ -134,8 +134,8 @@ export default function DemoTour({ steps = [], roleName = '', onClose }) {
       <div className="fixed inset-0 z-[70] bg-[#09090b] flex items-center justify-center" style={{ animation: 'fadeIn 0.4s ease-out' }}>
         <div className="text-center space-y-5 px-6 max-w-sm" style={{ animation: 'scaleIn 0.5s ease-out' }}>
           {/* Logo Tile */}
-          <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[#1c1c20] via-[#121215] to-[#000000] flex items-center justify-center mx-auto shadow-2xl border-2 border-[#e5a93c]/60">
-            <span className="text-3xl font-black text-[#e5a93c]">T</span>
+          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#1c1c20] via-[#121215] to-[#000000] flex items-center justify-center mx-auto shadow-2xl border-2 border-[#e5a93c]/60 p-3">
+            <img src="/logo.png" alt="TASKR Logo" className="w-full h-full object-contain drop-shadow-xl" />
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">TASKR</h1>
           <p className="text-sm text-zinc-300 font-medium max-w-xs mx-auto leading-relaxed">
