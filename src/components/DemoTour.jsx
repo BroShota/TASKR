@@ -139,23 +139,21 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
 
       {/* Dark overlay with spotlight cutout */}
       {isOverlayStep ? (
-        <div className="absolute inset-0 bg-[#0a0f0d]/85 backdrop-blur-sm" onClick={() => setIsPaused(!isPaused)} />
+        <div className="absolute inset-0 bg-[#0a0f0d]/85 backdrop-blur-sm z-[70]" onClick={() => setIsPaused(!isPaused)} />
       ) : (
-        <>
-          <div className="absolute inset-0 bg-[#0a0f0d]/80" onClick={() => setIsPaused(!isPaused)} />
-          {/* Spotlight hole */}
-          <div
-            className="absolute rounded-2xl border-2 border-[#e5a93c]/60 pointer-events-none"
-            style={{
-              top: spotlightRect.top,
-              left: spotlightRect.left,
-              width: spotlightRect.width,
-              height: spotlightRect.height,
-              boxShadow: '0 0 0 9999px rgba(10, 15, 13, 0.82), 0 0 30px 4px rgba(229, 169, 60, 0.15)',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-          />
-        </>
+        /* Crystal Clear Spotlight Hole - 0% Opacity in focus box, 85% opacity around it */
+        <div
+          onClick={() => setIsPaused(!isPaused)}
+          className="absolute rounded-2xl border-2 border-[#e5a93c] pointer-events-auto cursor-pointer transition-all duration-400 ease-out"
+          style={{
+            top: spotlightRect.top,
+            left: spotlightRect.left,
+            width: spotlightRect.width,
+            height: spotlightRect.height,
+            boxShadow: '0 0 0 9999px rgba(10, 15, 13, 0.85), 0 0 35px 6px rgba(229, 169, 60, 0.35)',
+            zIndex: 70
+          }}
+        />
       )}
 
       {/* Close button */}
