@@ -240,7 +240,7 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
       </div>
 
       {/* Secondary Filters & Sorting Bar */}
-      <div className="px-4 space-y-2">
+      <div id="demo-client-filters" className="px-4 space-y-2">
         <div className="flex items-center gap-2">
           {/* Zone Selector Pill */}
           <select
@@ -293,7 +293,7 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
       </div>
 
       {/* Handymen Results Count & List */}
-      <div id="demo-client-results" className="px-4">
+      <div className="px-4">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs text-[#414846] dark:text-[#a9acaa] font-semibold">
             Mostrando <strong className="text-[#1c1b1b] dark:text-white font-black">{filteredHandymen.length}</strong> profesionales verificados
@@ -306,13 +306,14 @@ export default function SearchView({ citas = [], client, onSelectHandyman, onQui
 
         {filteredHandymen.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
-            {filteredHandymen.map((handyman) => (
-              <HandymanCard
-                key={handyman.id}
-                handyman={handyman}
-                onSelect={onSelectHandyman}
-                onQuickBook={onQuickBook}
-              />
+            {filteredHandymen.map((handyman, idx) => (
+              <div key={handyman.id} id={idx === 0 ? "demo-client-first-handyman" : undefined}>
+                <HandymanCard
+                  handyman={handyman}
+                  onSelect={onSelectHandyman}
+                  onQuickBook={onQuickBook}
+                />
+              </div>
             ))}
           </div>
         ) : (

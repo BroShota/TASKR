@@ -155,7 +155,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
         </div>
 
         {/* Quick Earnings Dashboard Bar */}
-        <div className="mt-3 bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] rounded-2xl p-2.5 flex items-center justify-around text-xs">
+        <div id="demo-handyman-stats" className="mt-3 bg-[#f0f7f5] dark:bg-[#162b25] border border-[#c1ebe0] dark:border-[#2e3633] rounded-2xl p-2.5 flex items-center justify-around text-xs">
           <div className="text-center">
             <span className="text-[10px] text-[#414846] dark:text-[#a9acaa] uppercase font-bold block">Ganado Hoy</span>
             <span className="font-black text-sm text-[#033028] dark:text-[#e5a93c]">₡38,000</span>
@@ -176,7 +176,7 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
         </div>
 
         {/* Technician Payment Acceptance Settings */}
-        <div className="mt-2.5 bg-white dark:bg-[#1a201d] border border-[#e5e2e1] dark:border-[#2e3633] rounded-2xl p-2.5 space-y-1 text-xs">
+        <div id="demo-handyman-payment-settings" className="mt-2.5 bg-white dark:bg-[#1a201d] border border-[#e5e2e1] dark:border-[#2e3633] rounded-2xl p-2.5 space-y-1 text-xs">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#414846] dark:text-[#a9acaa]">
               Configuración de Cobro Directo (Autónomo)

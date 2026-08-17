@@ -1,6 +1,6 @@
 /**
  * TASKR Demo Tour Steps
- * Pasos del recorrido guiado para cada vista/rol
+ * Pasos del recorrido guiado para cada vista/rol con elementos reales interactivos
  * Español costarricense (tico) informal
  */
 
@@ -9,132 +9,114 @@ export const CLIENT_DEMO_STEPS = [
     targetId: 'demo-client-search',
     title: '🔍 Buscador Inteligente con Jerga Tica',
     description:
-      'Escribí como hablás vos: "el micro malo", "se fue la luz", "la compu no prende" o hasta "chunche del baño". TASKR entiende slang tico y errores de ortografía, y encuentra al especialista perfecto al toque.',
+      'Escribí como hablás vos: "el micro malo", "se fue la luz", "la compu no prende" o "tubo roto". TASKR entiende slang tico y errores ortográficos para encontrar al especialista ideal.',
   },
   {
     targetId: 'demo-client-categories',
-    title: '🏷️ Categorías de Servicio',
+    title: '🏷️ Categorías de Especialistas',
     description:
-      'Filtrá por tipo de trabajo: Plomería, Electricidad, Pintura, Jardinería, Cerrajería y más. Cada categoría muestra solo técnicos certificados y verificados en esa área.',
+      'Filtrá por oficio con un toque: Plomería, Electricidad, Pintura, Jardinería, Cerrajería y más. Cada categoría agrupa profesionales verificados.',
   },
   {
-    targetId: 'demo-client-results',
-    title: '⭐ Técnicos Verificados del Condominio',
+    targetId: 'demo-client-filters',
+    title: '⚙️ Filtros por Condominio y Precio',
     description:
-      'Cada profesional tiene rating de estrellas, precio por visita, años de experiencia y zona de cobertura. Tocá su tarjeta para ver el perfil completo y agendar una cita.',
+      'Seleccioná tu condominio en Escazú o Santa Ana y ordená los resultados por mejor calificación, precio por hora o años de experiencia.',
   },
   {
-    targetId: null,
-    title: '📅 Agendar Tu Cita',
+    targetId: 'demo-client-first-handyman',
+    title: '⭐ Perfil del Técnico & Cotización',
     description:
-      'Al seleccionar un técnico, elegís la hora exacta con un reloj visual, el día (Hoy, Mañana o una fecha específica), y si es emergencia se aplica un cargo de ₡5,000 CRC por atención inmediata.',
+      'Ves fotos, tarifa en colones (₡), estrellas y experiencia. Tocá "Cotizar & Agendar" para elegir horario con reloj interactivo o pedir atención de emergencia.',
   },
   {
-    targetId: null,
-    title: '💳 Métodos de Pago Flexibles',
+    targetId: 'demo-client-bell',
+    title: '🔔 Campana de Citas & PIN de Seguridad',
     description:
-      'Elegí entre tarjeta (Visa, Mastercard, AMEX con selector 3D premium), SINPE Móvil o efectivo. El pago se coordina directamente entre vos y el técnico.',
+      'Tocá esta campanita para desplegar tu burbuja flotante estilo Apple. Muestra tu cita activa y el PIN de 4 dígitos que le dictás al técnico al llegar a tu puerta.',
   },
   {
-    targetId: null,
-    title: '🔑 PIN de Seguridad Anti-Fraude',
+    targetId: 'demo-client-account',
+    title: '👤 Cuenta y Dirección de Residencia',
     description:
-      'Cuando tu cita esté confirmada, recibís un PIN de 4 dígitos exclusivo. Al llegar el técnico a tu puerta, le dictás el PIN para confirmar que es la persona correcta. Doble seguridad para vos y para él.',
+      'Accedé al perfil de tu apartamento o casa en el condominio y gestioná tu cuenta de usuario.',
   },
   {
-    targetId: null,
-    title: '🚫 Política de Cancelación Transparente',
+    targetId: 'demo-client-theme',
+    title: '🌓 Modo Claro / Modo Oscuro',
     description:
-      'Podés cancelar tu cita cuando querás. Si cancelás con más de 2 horas de anticipación, es gratis. Si cancelás a menos de 2 horas, se aplica una penalización de ₡5,000 CRC por desplazamiento del técnico.',
+      'Alterná al instante entre la interfaz de día y el modo oscuro de lujo con colores antracita y detalles dorados.',
   },
   {
-    targetId: null,
-    title: '🏰 Pase de Caseta Automático',
+    targetId: 'demo-client-nav-bookings',
+    title: '📅 Pestaña de Reservas & Pases de Caseta',
     description:
-      'Al confirmarse la cita, TASKR genera automáticamente un código de acceso para la garita de seguridad del condominio. El técnico lo muestra al guardia y entra sin problemas.',
+      'Gestioná todas tus citas, consultá el Pase TASKR autorizado para el guardia de caseta y cancelá sin costo hasta 2 horas antes.',
   },
 ];
 
 export const HANDYMAN_DEMO_STEPS = [
   {
     targetId: 'demo-handyman-header',
-    title: '🛠️ Panel del Socio Técnico TASKR',
+    title: '🛠️ Perfil del Socio Técnico',
     description:
-      'Este es tu centro de operaciones. Desde aquí gestionás tu perfil profesional, tu estado de disponibilidad, y configurás qué métodos de pago aceptás.',
+      'Panel principal del especialista con tu foto, nombre, especialidad y estado de conexión en el condominio.',
   },
   {
     targetId: 'demo-handyman-toggle',
     title: '🟢 Disponibilidad Online / Offline',
     description:
-      'Con un toque activás o desactivás tu disponibilidad. Cuando estás online, recibís solicitudes de citas de residentes dentro de tu radio de cobertura (5 km en Escazú).',
+      'Activá o desactivá tu estado con un toque. Al estar "EN LÍNEA" recibís solicitudes de condominios en tu radio de 5 km.',
+  },
+  {
+    targetId: 'demo-handyman-stats',
+    title: '📊 Resumen de Ganancias y Calificación',
+    description:
+      'Monitoreá lo que has ganado hoy en colones (₡38,000), tu promedio de calificación por residentes y trabajos exitosos.',
+  },
+  {
+    targetId: 'demo-handyman-payment-settings',
+    title: '💵 Cobro Directo Autónomo',
+    description:
+      'Elegí libremente si aceptás transferencias por SINPE Móvil o pago en Efectivo. El trato de pago es directo con el cliente.',
   },
   {
     targetId: 'demo-handyman-tabs',
-    title: '📂 Navegación por Pestañas',
+    title: '📂 Pestañas de Trabajo y Billetera',
     description:
-      'Tres secciones principales: Solicitudes (citas entrantes), Trabajo Actual (el trabajo que estás ejecutando ahora) y Billetera (tus ganancias acumuladas).',
+      'Navegá entre Solicitudes entrantes, Trabajo Actual en ejecución (con validación de PIN y cotización en sitio) y tu Billetera.',
   },
   {
     targetId: 'demo-handyman-requests',
-    title: '📥 Solicitudes de Citas Entrantes',
+    title: '📥 Solicitudes Entrantes de Residentes',
     description:
-      'Aquí aparecen las solicitudes de los residentes del condominio. Ves el tipo de trabajo, la dirección, el monto estimado y los datos del cliente. Decidís si la aceptás o la rechazás.',
-  },
-  {
-    targetId: null,
-    title: '✅ Aceptar o ❌ Rechazar Solicitud',
-    description:
-      'Si aceptás, la cita pasa a tu "Trabajo Actual" y el residente recibe la notificación. Si rechazás, el sistema busca automáticamente otro técnico disponible en la zona.',
-  },
-  {
-    targetId: null,
-    title: '🏰 Pase de Ingreso a Caseta de Seguridad',
-    description:
-      'Al llegar al condominio, mostrás el código de acceso TASKR al oficial de la garita. Este pase es generado automáticamente y autoriza tu ingreso al residencial.',
-  },
-  {
-    targetId: null,
-    title: '🔑 Validación de PIN en la Puerta',
-    description:
-      'Al llegar al apartamento, el residente te dicta su PIN de 4 dígitos. Lo ingresás en tu app y el sistema confirma tu presencia física real. Seguridad para ambos maes.',
-  },
-  {
-    targetId: null,
-    title: '💰 Cotización en Sitio & Reagendar',
-    description:
-      'Si el trabajo es grande (ej. Pintura completa ₡300,000), podés ajustar el presupuesto en sitio y programar la fecha de ejecución. Todo se actualiza en tiempo real para el cliente.',
-  },
-  {
-    targetId: null,
-    title: '🏦 Billetera & Ganancias',
-    description:
-      'Todas tus ganancias se registran en tu billetera digital. Ves el historial de trabajos completados, montos cobrados y tu balance acumulado. Retiros directos por SINPE.',
+      'Revisá los detalles de la visita solicitada, dirección en el condominio y monto. Aceptá la cita o rechazala para reasignación.',
   },
 ];
 
 export const SUPERVISOR_DEMO_STEPS = [
   {
     targetId: 'demo-supervisor-header',
-    title: '🛡️ Panel de Supervisor / Caseta',
+    title: '🛡️ Panel de Supervisor y Caseta',
     description:
-      'Desde aquí el administrador del condominio o el guardia de caseta monitorea todas las citas de mantenimiento en tiempo real. Control total sobre quién entra y sale.',
+      'Monitoreo centralizado en tiempo real para guardias de garita y administración del residencial.',
   },
   {
     targetId: 'demo-supervisor-stats',
-    title: '📊 Estadísticas en Tiempo Real',
+    title: '📊 Métricas en Tiempo Real',
     description:
-      'Ves de un vistazo cuántas citas están activas, pendientes, completadas y el monto total generado. Todo se actualiza automáticamente sin recargar la página.',
-  },
-  {
-    targetId: 'demo-supervisor-citas',
-    title: '📋 Lista de Citas del Condominio',
-    description:
-      'Cada cita muestra el técnico asignado, el residente, tipo de trabajo, monto y su estado actual. El supervisor verifica los pases de acceso antes de autorizar ingreso a la caseta.',
+      'Conteo automático de pedidos totales, citas sin asignar, técnicos en ruta y servicios completados.',
   },
   {
     targetId: 'demo-supervisor-links',
-    title: '🔗 Links de Acceso por Rol',
+    title: '🔗 Enlaces de Acceso por Rol',
     description:
-      'Desde aquí se generan los enlaces directos para cada vista: Cliente, Socio Técnico y Supervisor. Cada rol tiene su propia experiencia optimizada y segura.',
+      'Acceso rápido con URL directa a la App de Residentes (?role=client) y al Panel de Socios Técnicos (?role=handyman).',
+  },
+  {
+    targetId: 'demo-supervisor-citas',
+    title: '📋 Control de Pases y Citas en Vivo',
+    description:
+      'Tabla interactiva para verificar códigos de acceso a caseta (ej. TASKR-8492) antes de abrir la aguja al técnico.',
   },
 ];

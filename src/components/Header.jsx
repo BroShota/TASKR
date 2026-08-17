@@ -38,6 +38,7 @@ export default function Header({ client, citas = [], onOpenChat, onOpenIncidentM
           
           {/* User Account Button */}
           <button
+            id="demo-client-account"
             onClick={onOpenAuthModal}
             className="flex items-center space-x-1.5 p-1 pr-2.5 rounded-xl bg-[#f6f3f2] dark:bg-[#222926] border border-[#c0c8c5] dark:border-[#2e3633] hover:border-[#033028] dark:hover:border-[#e5a93c] transition-all"
             title="Mi Cuenta / Iniciar Sesión"
@@ -54,6 +55,7 @@ export default function Header({ client, citas = [], onOpenChat, onOpenIncidentM
 
           {/* Notification Bell Button (Apple-style Icon with Badge) */}
           <button
+            id="demo-client-bell"
             onClick={() => setIsBellOpen(!isBellOpen)}
             title="Recordatorio de Cita Próxima"
             className="relative p-2 rounded-xl transition-all duration-300 transform active:scale-90 bg-[#f6f3f2] dark:bg-[#222926] text-[#033028] dark:text-[#a5cfc4] border border-[#c0c8c5] dark:border-[#2e3633] shadow-xs flex items-center justify-center"
@@ -66,6 +68,7 @@ export default function Header({ client, citas = [], onOpenChat, onOpenIncidentM
 
           {/* Theme Toggle Button */}
           <button
+            id="demo-client-theme"
             onClick={onToggleTheme}
             title={isDarkMode ? "Cambiar a Modo Claro" : "Cambiar a Modo Oscuro"}
             className="p-1.5 rounded-xl transition-all duration-300 transform active:scale-90 bg-[#f0eded] dark:bg-[#222926] text-[#033028] dark:text-[#fdbe50] border border-[#c0c8c5] dark:border-[#3e665d] shadow-sm flex items-center justify-center"

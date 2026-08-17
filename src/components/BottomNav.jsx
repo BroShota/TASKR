@@ -18,6 +18,7 @@ export default function BottomNav({ activeTab, setActiveTab }) {
           return (
             <button
               key={tab.id}
+              id={tab.id === 'bookings' ? 'demo-client-nav-bookings' : undefined}
               onClick={() => setActiveTab(tab.id)}
               className={`flex flex-col items-center justify-center py-1 px-4 rounded-xl transition-all duration-200 ${
                 isActive

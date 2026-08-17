@@ -41,15 +41,40 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
     if (!step?.targetId) { setSpotlightRect(null); return; }
     const el = document.getElementById(step.targetId);
     if (!el) { setSpotlightRect(null); return; }
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Scroll element smoothly into view centered
+    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+
     const update = () => {
       const r = el.getBoundingClientRect();
-      const pad = 10;
-      setSpotlightRect({ top: r.top - pad, left: r.left - pad, width: r.width + pad * 2, height: r.height + pad * 2 });
-      setTooltipSide(window.innerHeight - r.bottom > 220 ? 'bottom' : 'top');
+      const pad = 8;
+      
+      const top = Math.max(6, r.top - pad);
+      const left = Math.max(6, r.left - pad);
+      const width = Math.min(window.innerWidth - 12, r.width + pad * 2);
+      const height = Math.min(window.innerHeight - 130, r.height + pad * 2);
+
+      setSpotlightRect({ top, left, width, height });
+
+      // Available space above & below
+      const spaceBelow = window.innerHeight - (top + height) - 80;
+      const spaceAbove = top - 20;
+
+      if (spaceBelow >= 160) {
+        setTooltipSide('bottom');
+      } else if (spaceAbove >= 160) {
+        setTooltipSide('top');
+      } else {
+        setTooltipSide('bottom');
+      }
     };
-    setTimeout(update, 450);
-    return () => {};
+
+    const timer = setTimeout(update, 350);
+    window.addEventListener('resize', update);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', update);
+    };
   }, [phase, stepIndex, steps]);
 
   const goToStep = useCallback((i) => {
@@ -163,16 +188,24 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
 
       {/* Tooltip Card */}
       <div
-        className={`absolute z-[71] max-w-[340px] w-[90vw] transition-opacity duration-200 ${fadeClass}`}
+        className={`absolute z-[71] max-w-[340px] w-[90vw] transition-all duration-300 pointer-events-none ${fadeClass}`}
         style={
           isOverlayStep
-            ? { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
+            ? { top: '48%', left: '50%', transform: 'translate(-50%, -50%)' }
             : tooltipSide === 'bottom'
-              ? { top: `${spotlightRect.top + spotlightRect.height + 16}px`, left: '50%', transform: 'translateX(-50%)' }
-              : { top: `${spotlightRect.top - 16}px`, left: '50%', transform: 'translate(-50%, -100%)' }
+              ? {
+                  top: `${Math.min(window.innerHeight - 240, spotlightRect.top + spotlightRect.height + 12)}px`,
+                  left: '50%',
+                  transform: 'translateX(-50%)'
+                }
+              : {
+                  top: `${Math.max(65, spotlightRect.top - 12)}px`,
+                  left: '50%',
+                  transform: 'translate(-50%, -100%)'
+                }
         }
       >
-        <div className="bg-[#1a201d] border border-[#2e3633] rounded-2xl p-4 shadow-2xl space-y-2.5 relative">
+        <div className="bg-[#1a201d] border border-[#2e3633] rounded-2xl p-4 shadow-2xl space-y-2.5 relative pointer-events-auto">
           {/* Gold accent line */}
           <div className="absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-[#e5a93c] to-transparent rounded-full" />
 
