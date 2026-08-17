@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, SkipForward, SkipBack, X, RotateCcw, ChevronRight, ChevronLeft, Check } from 'lucide-react';
+import { 
+  Play, Pause, X, RotateCcw, ChevronRight, ChevronLeft, Check,
+  Search, Tag, Sliders, Star, Bell, User, Moon, Calendar, Wrench, 
+  Power, TrendingUp, DollarSign, Folder, Inbox, ShieldCheck, FileText, 
+  ExternalLink, Smartphone
+} from 'lucide-react';
 
 const STEP_DURATION = 5500;
 const SPLASH_DURATION = 3200;
 
-export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱', onClose }) {
+export default function DemoTour({ steps = [], roleName = '', onClose }) {
   const [phase, setPhase] = useState('splash');
   const [stepIndex, setStepIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -12,6 +17,40 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
   const [tooltipSide, setTooltipSide] = useState('bottom');
   const [fadeClass, setFadeClass] = useState('opacity-100');
   const timerRef = useRef(null);
+
+  // Icon resolver for clean SVG vector icons
+  const getStepIcon = (iconName) => {
+    switch (iconName) {
+      case 'Search': return <Search className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Tag': return <Tag className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Sliders': return <Sliders className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Star': return <Star className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Bell': return <Bell className="w-4 h-4 text-[#e5a93c]" />;
+      case 'User': return <User className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Moon': return <Moon className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Calendar': return <Calendar className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Wrench': return <Wrench className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Power': return <Power className="w-4 h-4 text-[#e5a93c]" />;
+      case 'TrendingUp': return <TrendingUp className="w-4 h-4 text-[#e5a93c]" />;
+      case 'DollarSign': return <DollarSign className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Folder': return <Folder className="w-4 h-4 text-[#e5a93c]" />;
+      case 'Inbox': return <Inbox className="w-4 h-4 text-[#e5a93c]" />;
+      case 'ShieldCheck': return <ShieldCheck className="w-4 h-4 text-[#e5a93c]" />;
+      case 'FileText': return <FileText className="w-4 h-4 text-[#e5a93c]" />;
+      case 'ExternalLink': return <ExternalLink className="w-4 h-4 text-[#e5a93c]" />;
+      default: return <ShieldCheck className="w-4 h-4 text-[#e5a93c]" />;
+    }
+  };
+
+  const getRoleIcon = (role) => {
+    if (role.includes('Socio') || role.includes('Técnico')) {
+      return <Wrench className="w-3.5 h-3.5 text-[#e5a93c]" />;
+    }
+    if (role.includes('Supervisor')) {
+      return <ShieldCheck className="w-3.5 h-3.5 text-[#e5a93c]" />;
+    }
+    return <Smartphone className="w-3.5 h-3.5 text-[#e5a93c]" />;
+  };
 
   // Splash → touring
   useEffect(() => {
@@ -89,7 +128,7 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
   const progress = phase === 'touring' ? ((stepIndex + 1) / steps.length) * 100 : 0;
   const step = steps[stepIndex];
 
-  // ─── SPLASH (Black / White / Gold Luxury) ───
+  // ─── SPLASH (Clean SVG Icons / Black / Gold) ───
   if (phase === 'splash') {
     return (
       <div className="fixed inset-0 z-[70] bg-[#09090b] flex items-center justify-center" style={{ animation: 'fadeIn 0.4s ease-out' }}>
@@ -103,9 +142,10 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
             Plataforma de servicios técnicos para condominios de Costa Rica
           </p>
           <div className="pt-4 space-y-2">
-            <span className="text-xs text-[#e5a93c] font-black uppercase tracking-widest block">
-              {roleEmoji} Demo — Vista {roleName}
-            </span>
+            <div className="flex items-center justify-center space-x-1.5 text-xs text-[#e5a93c] font-black uppercase tracking-widest">
+              {getRoleIcon(roleName)}
+              <span>Demo — Vista {roleName}</span>
+            </div>
             <div className="flex items-center justify-center space-x-1.5">
               <div className="w-2 h-2 rounded-full bg-[#e5a93c] animate-pulse" />
               <span className="text-xs text-zinc-400 font-semibold">Iniciando recorrido...</span>
@@ -119,7 +159,7 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
     );
   }
 
-  // ─── COMPLETE (Black / White / Gold Finish) ───
+  // ─── COMPLETE (Clean SVG Vector) ───
   if (phase === 'complete') {
     return (
       <div className="fixed inset-0 z-[70] bg-[#09090b]/95 backdrop-blur-xl flex items-center justify-center" style={{ animation: 'fadeIn 0.3s ease-out' }}>
@@ -156,7 +196,7 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
     );
   }
 
-  // ─── TOURING (Pure Obsidian Overlay & Gold Spotlight) ───
+  // ─── TOURING (SVG Spotlight & Clean Badges) ───
   const isOverlayStep = !step?.targetId || !spotlightRect;
   const isBottomTarget = Boolean(spotlightRect && (spotlightRect.top + spotlightRect.height > window.innerHeight - 130));
 
@@ -189,7 +229,7 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
         </button>
       )}
 
-      {/* Tooltip Card (Obsidian / Black / White / Gold) */}
+      {/* Tooltip Card (Clean Vector SVG Badges) */}
       <div
         className={`absolute z-[71] max-w-[340px] w-[90vw] transition-all duration-300 pointer-events-none ${fadeClass}`}
         style={
@@ -212,16 +252,22 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
           {/* Gold accent line */}
           <div className="absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-[#e5a93c] to-transparent rounded-full" />
 
-          <h3 className="text-sm font-black text-white leading-tight pt-1">
-            {step?.title}
-          </h3>
+          <div className="flex items-center space-x-2.5 pt-1">
+            <div className="w-7 h-7 rounded-xl bg-zinc-800/90 border border-zinc-700/60 flex items-center justify-center shrink-0 shadow-xs">
+              {getStepIcon(step?.icon)}
+            </div>
+            <h3 className="text-sm font-black text-white leading-tight">
+              {step?.title}
+            </h3>
+          </div>
+
           <p className="text-[12px] text-zinc-300 leading-relaxed font-medium">
             {step?.description}
           </p>
         </div>
       </div>
 
-      {/* Control Bar (Obsidian / Black / Gold / White) */}
+      {/* Control Bar (Vector Buttons & Progress) */}
       <div
         className={`absolute z-[72] transition-all duration-300 ease-out bg-[#121215]/95 backdrop-blur-xl px-4 py-2.5 space-y-2 ${
           isBottomTarget
@@ -282,9 +328,9 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
 
       {/* Paused indicator */}
       {isPaused && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[71] bg-[#e5a93c] text-[#121215] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center space-x-1 shadow-lg" style={{ animation: 'fadeIn 0.2s ease-out' }}>
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[71] bg-[#e5a93c] text-[#121215] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center space-x-1.5 shadow-lg" style={{ animation: 'fadeIn 0.2s ease-out' }}>
           <Pause className="w-3 h-3" />
-          <span>Pausado — Tocá ▶ para continuar</span>
+          <span>Pausado — Tocá reproducir para continuar</span>
         </div>
       )}
 

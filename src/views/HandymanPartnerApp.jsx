@@ -606,7 +606,6 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
         <DemoTour
           steps={HANDYMAN_DEMO_STEPS}
           roleName="Socio Técnico"
-          roleEmoji="🛠️"
           onClose={() => setShowDemo(false)}
         />
       )}
@@ -614,11 +613,11 @@ export default function HandymanPartnerApp({ onOpenChat, isDarkMode, citas = [],
       {!showDemo && (
         <button
           onClick={() => setShowDemo(true)}
-          className="fixed bottom-6 right-6 z-40 bg-[#e5a93c] hover:bg-[#fdbe50] text-[#1c1b1b] font-black py-3 px-5 rounded-2xl text-xs shadow-xl flex items-center space-x-2 transition-all transform active:scale-95 border border-[#e5a93c]/50"
+          className="fixed bottom-6 right-6 z-40 bg-[#e5a93c] hover:bg-[#fdbe50] text-[#121215] font-black py-2.5 px-4 rounded-2xl text-xs shadow-2xl flex items-center space-x-2 transition-all transform active:scale-95 border border-[#e5a93c]/60"
           style={{ animation: 'pulse 2s infinite' }}
         >
-          <Play className="w-4 h-4" />
-          <span>▶ Ver Demo</span>
+          <Play className="w-3.5 h-3.5 fill-current" />
+          <span>Ver Demo</span>
         </button>
       )}
 
