@@ -158,6 +158,7 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
 
   // ─── TOURING ───
   const isOverlayStep = !step?.targetId || !spotlightRect;
+  const isBottomTarget = Boolean(spotlightRect && (spotlightRect.top + spotlightRect.height > window.innerHeight - 130));
 
   return (
     <div className="fixed inset-0 z-[70]" style={{ animation: 'fadeIn 0.3s ease-out' }}>
@@ -181,10 +182,12 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
         />
       )}
 
-      {/* Close button */}
-      <button onClick={onClose} className="absolute top-4 right-4 z-[71] bg-white/10 hover:bg-white/20 text-white p-2 rounded-full border border-white/20 transition-all">
-        <X className="w-4 h-4" />
-      </button>
+      {/* Floating Close button when control bar is at bottom */}
+      {!isBottomTarget && (
+        <button onClick={onClose} className="absolute top-4 right-4 z-[71] bg-white/10 hover:bg-white/20 text-white p-2 rounded-full border border-white/20 transition-all">
+          <X className="w-4 h-4" />
+        </button>
+      )}
 
       {/* Tooltip Card */}
       <div
@@ -192,16 +195,16 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
         style={
           isOverlayStep
             ? { top: '48%', left: '50%', transform: 'translate(-50%, -50%)' }
-            : tooltipSide === 'bottom'
+            : isBottomTarget || tooltipSide === 'top'
               ? {
+                  top: `${Math.max(80, spotlightRect.top - 14)}px`,
+                  left: '50%',
+                  transform: 'translate(-50%, -100%)'
+                }
+              : {
                   top: `${Math.min(window.innerHeight - 240, spotlightRect.top + spotlightRect.height + 12)}px`,
                   left: '50%',
                   transform: 'translateX(-50%)'
-                }
-              : {
-                  top: `${Math.max(65, spotlightRect.top - 12)}px`,
-                  left: '50%',
-                  transform: 'translate(-50%, -100%)'
                 }
         }
       >
@@ -218,8 +221,14 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
         </div>
       </div>
 
-      {/* Bottom Control Bar */}
-      <div className="absolute bottom-0 left-0 right-0 z-[71] bg-[#1a201d]/95 backdrop-blur-md border-t border-[#2e3633] px-4 py-3 space-y-2.5">
+      {/* Control Bar (Adaptive: Floats at top when target is at bottom, so it NEVER covers bottom elements) */}
+      <div
+        className={`absolute z-[72] transition-all duration-300 ease-out bg-[#1a201d]/95 backdrop-blur-md px-4 py-2.5 space-y-2 ${
+          isBottomTarget
+            ? 'top-3 left-3 right-3 rounded-2xl border border-[#e5a93c]/50 shadow-2xl max-w-md mx-auto'
+            : 'bottom-0 left-0 right-0 border-t border-[#2e3633]'
+        }`}
+      >
         {/* Progress bar */}
         <div className="relative h-1 bg-[#2e3633] rounded-full overflow-hidden">
           <div
@@ -239,24 +248,34 @@ export default function DemoTour({ steps = [], roleName = '', roleEmoji = '📱'
             <button
               onClick={handlePrev}
               disabled={stepIndex === 0}
-              className="bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white p-2 rounded-xl transition-all"
+              className="bg-white/10 hover:bg-white/20 disabled:opacity-30 text-white p-1.5 rounded-xl transition-all"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className="bg-[#e5a93c] hover:bg-[#fdbe50] text-[#1c1b1b] p-2 rounded-xl shadow-sm transition-all"
+              className="bg-[#e5a93c] hover:bg-[#fdbe50] text-[#1c1b1b] p-1.5 rounded-xl shadow-sm transition-all"
             >
               {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
             </button>
 
             <button
               onClick={handleNext}
-              className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-xl transition-all"
+              className="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-xl transition-all"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
+
+            {isBottomTarget && (
+              <button
+                onClick={onClose}
+                className="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-xl transition-all ml-1"
+                title="Cerrar Demo"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
       </div>
